@@ -98,4 +98,51 @@ describe("alermFormSchema", () => {
       expect(result.data.repeatIntervalMs).toBe(86400000);
     }
   });
+
+  it("バリデーション: soundUri が指定されている場合に保持", () => {
+    const validData = {
+      title: "テスト",
+      date: new Date("2026-03-02"),
+      time: "07:00",
+      exact: true,
+      soundUri: "sounds/alarm.mp3",
+    };
+
+    const result = alermFormSchema.safeParse(validData);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.soundUri).toBe("sounds/alarm.mp3");
+    }
+  });
+
+  it("バリデーション: soundUri が未指定の場合は undefined", () => {
+    const validData = {
+      title: "テスト",
+      date: new Date("2026-03-02"),
+      time: "07:00",
+      exact: true,
+    };
+
+    const result = alermFormSchema.safeParse(validData);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.soundUri).toBeUndefined();
+    }
+  });
+
+  it("バリデーション: soundUri が空文字列の場合は undefined に変換", () => {
+    const validData = {
+      title: "テスト",
+      date: new Date("2026-03-02"),
+      time: "07:00",
+      exact: true,
+      soundUri: "",
+    };
+
+    const result = alermFormSchema.safeParse(validData);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.soundUri).toBeUndefined();
+    }
+  });
 });

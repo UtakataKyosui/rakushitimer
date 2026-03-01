@@ -6,6 +6,7 @@ declare module "tauri-plugin-alerm-api" {
     triggerAtMs: number;
     exact?: boolean;
     repeatIntervalMs?: number;
+    soundUri?: string;
   }
 
   export interface CheckPermissionResult {
@@ -19,6 +20,7 @@ declare module "tauri-plugin-alerm-api" {
     triggerAtMs: number;
     exact: boolean;
     repeatIntervalMs?: number;
+    soundUri?: string;
   }
 
   export function setAlarm(options: SetAlarmOptions): Promise<void>;

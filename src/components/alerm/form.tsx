@@ -46,6 +46,7 @@ export const alermFormSchema = z.object({
     .min(0, "0以上の値を入力してください")
     .optional()
     .transform((v) => (v === 0 ? undefined : v)),
+  soundUri: z.string().optional().transform((v) => (v === "" ? undefined : v)),
 });
 
 export type AlermFormData = z.infer<typeof alermFormSchema>;
@@ -67,6 +68,7 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
       time: "08:00",
       exact: true,
       repeatIntervalMs: undefined,
+      soundUri: undefined,
     },
   });
 
@@ -95,6 +97,7 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
         triggerAtMs,
         exact: data.exact,
         repeatIntervalMs: data.repeatIntervalMs,
+        soundUri: data.soundUri,
       };
 
       await onSubmit(options);
@@ -244,6 +247,27 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
                   </FormControl>
                   <FormDescription>
                     0 の場合は繰り返しなし（1日 = 86400000ms）
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="soundUri"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>アラーム音（オプション）</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="sounds/alarm.mp3"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    アセットフォルダ内の音声ファイルパス（省略時はシステム音）
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

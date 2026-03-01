@@ -68,6 +68,7 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
       time: "08:00",
       exact: true,
       repeatIntervalMs: undefined,
+      soundUri: undefined,
     },
   });
 
@@ -246,6 +247,27 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
                   </FormControl>
                   <FormDescription>
                     0 の場合は繰り返しなし（1日 = 86400000ms）
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="soundUri"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>アラーム音（オプション）</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="sounds/alarm.mp3"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    アセットフォルダ内の音声ファイルパス（省略時はシステム音）
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

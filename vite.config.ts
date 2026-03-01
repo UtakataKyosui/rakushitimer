@@ -1,5 +1,5 @@
 import path from "path"
-import { defineConfig } from "vitest/config";
+import { defineConfig, configDefaults } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import tailwindcss from '@tailwindcss/vite'
 
@@ -39,7 +39,7 @@ export default defineConfig(async () => ({
   test: {
     environment: "jsdom",
     globals: true,
-    exclude: ["**/.worktrees/**", "**/node_modules/**"],
+    exclude: [...configDefaults.exclude, "**/.worktrees/**"],
     alias: {
       "tauri-plugin-alerm-api": path.resolve(__dirname, "./src/hooks/__mocks__/tauri-plugin-alerm-api.ts"),
     }

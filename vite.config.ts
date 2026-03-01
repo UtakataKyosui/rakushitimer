@@ -43,5 +43,8 @@ export default defineConfig(async () => ({
   test: {
     environment: "jsdom",
     globals: true,
+    alias: {
+      "tauri-plugin-alerm-api": path.resolve(__dirname, "./src/hooks/__mocks__/tauri-plugin-alerm-api.ts"),
+    }
   }
 }));

@@ -39,7 +39,7 @@ export const alermFormSchema = z.object({
   date: z.date().refine((date) => date != null, {
     message: "日付を選択してください",
   }),
-  time: z.string().regex(/^\d{2}:\d{2}$/, "HH:MM形式で入力してください"),
+  time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "HH:MM形式で入力してください"),
   exact: z.boolean().default(true),
   repeatIntervalMs: z.coerce
     .number()
@@ -58,8 +58,8 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<AlermFormData>({
-    resolver: zodResolver(alermFormSchema) as any,
+  const form = useForm({
+    resolver: zodResolver(alermFormSchema),
     defaultValues: {
       title: "",
       message: "",
@@ -68,15 +68,16 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
       exact: true,
       repeatIntervalMs: undefined,
     },
-  });
+  } as any);
 
-  const handleSubmit = async (data: AlermFormData) => {
+  const handleSubmit = async (data: any) => {
+    const formData = data as AlermFormData;
     try {
       setIsSubmitting(true);
 
       // date + time を結合して triggerAtMs を計算
-      const [hours, minutes] = data.time.split(":").map(Number);
-      const triggerDate = new Date(data.date);
+      const [hours, minutes] = formData.time.split(":").map(Number);
+      const triggerDate = new Date(formData.date);
       triggerDate.setHours(hours, minutes, 0, 0);
       const triggerAtMs = triggerDate.getTime();
 
@@ -90,11 +91,11 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
       }
 
       const options: SetAlarmOptions = {
-        title: data.title,
-        message: data.message,
+        title: formData.title,
+        message: formData.message,
         triggerAtMs,
-        exact: data.exact,
-        repeatIntervalMs: data.repeatIntervalMs,
+        exact: formData.exact,
+        repeatIntervalMs: formData.repeatIntervalMs,
       };
 
       await onSubmit(options);

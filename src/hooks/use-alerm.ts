@@ -37,7 +37,7 @@ export function useAlerm() {
   // 既存ID の最大値を取得して、次の ID を生成
   const generateId = useCallback((): number => {
     if (alarms.length === 0) return 1;
-    const maxId = Math.max(...alarms.map((a) => a.id));
+    const maxId = alarms.reduce((max, a) => Math.max(max, a.id), 0);
     return maxId + 1;
   }, [alarms]);
 

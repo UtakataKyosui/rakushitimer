@@ -1,4 +1,5 @@
 import { AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { CheckPermissionResult } from "@/hooks/use-alerm";
 
@@ -21,6 +22,7 @@ export function PermissionBanner({
       await onOpenSettings();
     } catch (error) {
       console.error("Failed to open settings:", error);
+      toast.error("設定画面を開けませんでした");
     }
   };
 

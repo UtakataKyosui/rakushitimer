@@ -1,6 +1,7 @@
 import { BellIcon, TrashIcon, RepeatIcon } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 import { ja } from "date-fns/locale";
+import { toast } from "sonner";
 import {
   Item,
   ItemMedia,
@@ -29,8 +30,10 @@ export function AlarmCard({
   const handleDelete = async () => {
     try {
       await onCancel(alarm.id);
+      toast.success("アラームを削除しました");
     } catch (error) {
       console.error("Failed to delete alarm:", error);
+      toast.error("アラームの削除に失敗しました");
     }
   };
 

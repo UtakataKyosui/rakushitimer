@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 import { useAlerm } from "../use-alerm";
 
 // Mock tauri plugin
@@ -24,18 +24,16 @@ describe("useAlerm", () => {
     expect(result.current.isSubmitting).toBe(false);
 
     // 初期化完了を待つ
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
     });
-
-    expect(result.current.isLoading).toBe(false);
   });
 
   it("アラーム追加: 正常にアラームを追加できる", async () => {
     const { result } = renderHook(() => useAlerm());
 
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
     });
 
     await act(async () => {
@@ -53,8 +51,8 @@ describe("useAlerm", () => {
   it("ID生成: 衝突しない ID を生成", async () => {
     const { result } = renderHook(() => useAlerm());
 
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
     });
 
     // 2つのアラームを追加
@@ -83,8 +81,8 @@ describe("useAlerm", () => {
   it("アラーム削除: キャンセル処理を実行", async () => {
     const { result } = renderHook(() => useAlerm());
 
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
     });
 
     await act(async () => {
@@ -106,8 +104,8 @@ describe("useAlerm", () => {
   it("権限チェック: Android 12+ 権限状態をチェック", async () => {
     const { result } = renderHook(() => useAlerm());
 
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
     });
 
     expect(result.current.permission).not.toBeNull();

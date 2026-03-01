@@ -1,4 +1,4 @@
-import { BellIcon, TrashIcon, RepeatIcon } from "lucide-react";
+import { BellIcon, TrashIcon, RepeatIcon, Volume2Icon } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { toast } from "sonner";
@@ -61,6 +61,12 @@ export function AlarmCard({
               <div className="flex items-center gap-1 text-xs text-blue-600">
                 <RepeatIcon className="w-3 h-3" />
                 <span>繰り返し</span>
+              </div>
+            )}
+            {alarm.soundUri && (
+              <div className="flex items-center gap-1 text-xs text-green-600">
+                <Volume2Icon className="w-3 h-3" />
+                <span>{alarm.soundUri}</span>
               </div>
             )}
           </div>

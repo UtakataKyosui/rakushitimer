@@ -20,6 +20,7 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
+tauri-plugin-alerm = { git = "https://github.com/UtakataKyosui/tauri-plugin-alerm-android", rev = "0c43628edf2fd84c2d6156b7a90aa26403455be6" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 

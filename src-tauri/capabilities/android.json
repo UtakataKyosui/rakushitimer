@@ -1,0 +1,16 @@
+{
+  "$schema": "../gen/schemas/android-schema.json",
+  "identifier": "android-alerm",
+  "description": "Capability for Android alarm management",
+  "windows": ["main"],
+  "platforms": ["android"],
+  "permissions": [
+    "core:default",
+    "opener:default",
+    "alerm:allow-set-alarm",
+    "alerm:allow-cancel-alarm",
+    "alerm:allow-list-alarms",
+    "alerm:allow-check-exact-alarm-permission",
+    "alerm:allow-open-exact-alarm-settings"
+  ]
+}

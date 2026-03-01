@@ -2746,6 +2746,7 @@ dependencies = [
  "serde_json",
  "tauri",
  "tauri-build",
+ "tauri-plugin-alerm",
  "tauri-plugin-opener",
 ]
 
@@ -3623,6 +3624,17 @@ dependencies = [
  "tauri-utils",
  "toml 0.9.12+spec-1.1.0",
  "walkdir",
+]
+
+[[package]]
+name = "tauri-plugin-alerm"
+version = "0.1.0"
+source = "git+https://github.com/UtakataKyosui/tauri-plugin-alerm-andoroid#0c43628edf2fd84c2d6156b7a90aa26403455be6"
+dependencies = [
+ "serde",
+ "tauri",
+ "tauri-plugin",
+ "thiserror 2.0.18",
 ]
 
 [[package]]

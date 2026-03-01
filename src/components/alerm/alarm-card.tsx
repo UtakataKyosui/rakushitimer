@@ -73,6 +73,7 @@ export function AlarmCard({
           onClick={handleDelete}
           disabled={isDeleting}
           className="text-red-600 hover:bg-red-50"
+          aria-label="アラームを削除"
         >
           <TrashIcon className="w-4 h-4" />
         </Button>

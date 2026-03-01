@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
   setAlarm,
   cancelAlarm,
@@ -33,13 +33,7 @@ export function useAlerm() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [permission, setPermission] = useState<CheckPermissionResult | null>(null);
-
-  // 既存ID の最大値を取得して、次の ID を生成
-  const generateId = useCallback((): number => {
-    if (alarms.length === 0) return 1;
-    const maxId = alarms.reduce((max, a) => Math.max(max, a.id), 0);
-    return maxId + 1;
-  }, [alarms]);
+  const nextId = useRef(1);
 
   // 初期化時にアラーム一覧と権限を取得
   useEffect(() => {
@@ -50,7 +44,11 @@ export function useAlerm() {
           listAlarms(),
           checkExactAlarmPermission(),
         ]);
-        setAlarms(loadedAlarms || []);
+        const alarmsData = loadedAlarms || [];
+        setAlarms(alarmsData);
+        if (alarmsData.length > 0) {
+          nextId.current = Math.max(...alarmsData.map((a) => a.id)) + 1;
+        }
         setPermission(permissionResult);
       } catch (error) {
         console.error("Failed to initialize alarms:", error);
@@ -65,36 +63,33 @@ export function useAlerm() {
   }, []);
 
   // アラーム追加
-  const addAlarm = useCallback(
-    async (options: SetAlarmOptions) => {
-      try {
-        setIsSubmitting(true);
-        const id = generateId();
-        const alarmData: AlarmInfo = {
-          id,
-          title: options.title,
-          message: options.message,
-          triggerAtMs: options.triggerAtMs,
-          exact: options.exact ?? true,
-          repeatIntervalMs: options.repeatIntervalMs,
-        };
+  const addAlarm = useCallback(async (options: SetAlarmOptions) => {
+    try {
+      setIsSubmitting(true);
+      const id = nextId.current++;
+      const newAlarm: AlarmInfo = {
+        id,
+        title: options.title,
+        message: options.message,
+        triggerAtMs: options.triggerAtMs,
+        exact: options.exact ?? true,
+        repeatIntervalMs: options.repeatIntervalMs,
+      };
 
-        await setAlarm({
-          id,
-          ...options,
-          exact: options.exact ?? true,
-        });
+      await setAlarm({
+        id,
+        ...options,
+        exact: options.exact ?? true,
+      });
 
-        setAlarms((prev) => [...prev, alarmData]);
-      } catch (error) {
-        console.error("Failed to add alarm:", error);
-        throw error;
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [generateId]
-  );
+      setAlarms((prev) => [...prev, newAlarm]);
+    } catch (error) {
+      console.error("Failed to add alarm:", error);
+      throw error;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, []);
 
   // アラーム削除
   const removeAlarm = useCallback(async (id: number) => {
@@ -128,6 +123,5 @@ export function useAlerm() {
     addAlarm,
     removeAlarm,
     openPermissionSettings,
-    generateId,
   };
 }

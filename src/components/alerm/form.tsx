@@ -58,8 +58,8 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm({
-    resolver: zodResolver(alermFormSchema),
+  const form = useForm<AlermFormData>({
+    resolver: zodResolver(alermFormSchema) as any,
     defaultValues: {
       title: "",
       message: "",
@@ -68,16 +68,15 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
       exact: true,
       repeatIntervalMs: undefined,
     },
-  } as any);
+  });
 
-  const handleSubmit = async (data: any) => {
-    const formData = data as AlermFormData;
+  const handleSubmit = async (data: AlermFormData) => {
     try {
       setIsSubmitting(true);
 
       // date + time を結合して triggerAtMs を計算
-      const [hours, minutes] = formData.time.split(":").map(Number);
-      const triggerDate = new Date(formData.date);
+      const [hours, minutes] = data.time.split(":").map(Number);
+      const triggerDate = new Date(data.date);
       triggerDate.setHours(hours, minutes, 0, 0);
       const triggerAtMs = triggerDate.getTime();
 
@@ -91,11 +90,11 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
       }
 
       const options: SetAlarmOptions = {
-        title: formData.title,
-        message: formData.message,
+        title: data.title,
+        message: data.message,
         triggerAtMs,
-        exact: formData.exact,
-        repeatIntervalMs: formData.repeatIntervalMs,
+        exact: data.exact,
+        repeatIntervalMs: data.repeatIntervalMs,
       };
 
       await onSubmit(options);
@@ -240,7 +239,7 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
                       type="number"
                       placeholder="0"
                       {...field}
-                      value={field.value || ""}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormDescription>

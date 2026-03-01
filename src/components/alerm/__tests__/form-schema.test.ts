@@ -129,4 +129,20 @@ describe("alermFormSchema", () => {
       expect(result.data.soundUri).toBeUndefined();
     }
   });
+
+  it("バリデーション: soundUri が空文字列の場合は undefined に変換", () => {
+    const validData = {
+      title: "テスト",
+      date: new Date("2026-03-02"),
+      time: "07:00",
+      exact: true,
+      soundUri: "",
+    };
+
+    const result = alermFormSchema.safeParse(validData);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.soundUri).toBeUndefined();
+    }
+  });
 });

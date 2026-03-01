@@ -20,7 +20,9 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install Android NDK
-        run: sdkmanager "ndk;27.2.12479018"
+        run: |
+          sdkmanager "ndk;27.2.12479018"
+          echo "NDK_HOME=$ANDROID_SDK_ROOT/ndk/27.2.12479018" >> "$GITHUB_ENV"
 
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -44,8 +46,6 @@ jobs:
 
       - name: Build Android APK
         run: pnpm tauri android build --debug
-        env:
-          NDK_HOME: ${{ env.ANDROID_NDK_HOME }}
 
       - name: Upload APK to GitHub Releases
         uses: softprops/action-gh-release@v2

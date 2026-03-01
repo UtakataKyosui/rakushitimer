@@ -45,19 +45,22 @@ describe("findSoundByCode", () => {
   });
 
   it("UNLOCKABLE_SOUNDSにコードがある場合、マッチする音声を返す", async () => {
-    // テスト用の固定ハッシュを計算して確認する
-    // ここではUNLOCKABLE_SOUNDSに実際のデータがある場合のテスト構造を示す
-    // 現時点でUNLOCKABLE_SOUNDSは空なので、動作検証はモックで行う
-    if (UNLOCKABLE_SOUNDS.length === 0) {
-      // 空の場合は必ずnullが返ること
-      const result = await findSoundByCode("ANY-CODE");
-      expect(result).toBeNull();
-    } else {
-      // データがある場合は最初のコードでマッチすることを確認
-      const firstSound = UNLOCKABLE_SOUNDS[0];
-      // コードのハッシュに一致するコードでnullでないことを確認
-      // （実際のコードは埋め込まれていないため、ハッシュ比較でnullになる）
-      expect(firstSound).toBeDefined();
+    const testCode = "TEST-CODE-MATCH-FIND";
+    const codeHash = await hashSerialCode(testCode);
+    const testSound: UnlockableSound = {
+      id: "test-find-id",
+      label: "マッチテスト音声",
+      soundUri: "sounds/test-find.mp3",
+      codeHash,
+    };
+
+    UNLOCKABLE_SOUNDS.push(testSound);
+    try {
+      const result = await findSoundByCode(testCode);
+      expect(result).toEqual(testSound);
+    } finally {
+      const idx = UNLOCKABLE_SOUNDS.indexOf(testSound);
+      if (idx !== -1) UNLOCKABLE_SOUNDS.splice(idx, 1);
     }
   });
 

@@ -20,24 +20,38 @@ export function useUnlockedSounds(): {
   const [unlockedSounds, setUnlockedSounds] = useState<UnlockableSound[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const storeRef = useRef<Store | null>(null);
+  // stale closureを避けるために最新の状態をrefでも保持する
+  const unlockedRef = useRef<UnlockableSound[]>([]);
+
+  function syncUnlocked(value: UnlockableSound[]) {
+    unlockedRef.current = value;
+    setUnlockedSounds(value);
+  }
 
   useEffect(() => {
     let cancelled = false;
 
     async function init() {
-      const store = await load("unlocked-sounds.json");
-      if (cancelled) return;
-      storeRef.current = store;
+      try {
+        const store = await load("unlocked-sounds.json");
+        if (cancelled) return;
+        storeRef.current = store;
 
-      const savedIds = (await store.get<string[]>(STORE_KEY)) ?? [];
-      if (cancelled) return;
+        const savedIds = (await store.get<string[]>(STORE_KEY)) ?? [];
+        if (cancelled) return;
 
-      const restored = savedIds
-        .map((id) => UNLOCKABLE_SOUNDS.find((s) => s.id === id))
-        .filter((s): s is UnlockableSound => s !== undefined);
+        const restored = savedIds
+          .map((id) => UNLOCKABLE_SOUNDS.find((s) => s.id === id))
+          .filter((s): s is UnlockableSound => s !== undefined);
 
-      setUnlockedSounds(restored);
-      setIsLoading(false);
+        syncUnlocked(restored);
+      } catch (error) {
+        console.error("Failed to initialize unlocked sounds from store:", error);
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
     }
 
     init();
@@ -52,19 +66,26 @@ export function useUnlockedSounds(): {
       return { success: false, reason: "invalid_code" };
     }
 
-    const alreadyUnlocked = unlockedSounds.some((s) => s.id === sound.id);
+    const current = unlockedRef.current;
+    const alreadyUnlocked = current.some((s) => s.id === sound.id);
     if (alreadyUnlocked) {
       return { success: true, sound, alreadyUnlocked: true };
     }
 
-    const newUnlocked = [...unlockedSounds, sound];
-    setUnlockedSounds(newUnlocked);
+    const newUnlocked = [...current, sound];
+    syncUnlocked(newUnlocked);
 
     if (storeRef.current) {
-      await storeRef.current.set(
-        STORE_KEY,
-        newUnlocked.map((s) => s.id)
-      );
+      try {
+        await storeRef.current.set(
+          STORE_KEY,
+          newUnlocked.map((s) => s.id)
+        );
+      } catch (e) {
+        // 永続化失敗時はUIをロールバックしてエラーを再スロー
+        syncUnlocked(current);
+        throw e;
+      }
     }
 
     return { success: true, sound, alreadyUnlocked: false };

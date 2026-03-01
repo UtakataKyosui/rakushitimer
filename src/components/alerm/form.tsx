@@ -272,7 +272,7 @@ export function AlermForm({ onSubmit, unlockedSounds }: AlermFormProps) {
                     onValueChange={(value) =>
                       field.onChange(value === "__system__" ? undefined : value)
                     }
-                    defaultValue="__system__"
+                    value={field.value ?? "__system__"}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">

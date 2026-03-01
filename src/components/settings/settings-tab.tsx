@@ -28,13 +28,16 @@ export default function SettingsTab() {
       } else {
         toast.error("無効なシリアルコードやで");
       }
+    } catch (error) {
+      console.error("音声の解放に失敗しました:", error);
+      toast.error("音声の解放に失敗しました。しばらくしてからもう一度試してな");
     } finally {
       setIsLoading(false);
       inputRef.current?.focus();
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: { key: string }) => {
     if (e.key === "Enter") {
       handleUnlock();
     }

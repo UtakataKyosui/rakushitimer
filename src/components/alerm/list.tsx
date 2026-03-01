@@ -1,4 +1,3 @@
-import { BellOffIcon } from "lucide-react";
 import { useAlerm } from "@/hooks/use-alerm";
 import { type UnlockableSound } from "@/lib/serial-codes";
 import { Spinner } from "@/components/ui/spinner";
@@ -41,10 +40,10 @@ export default function AlermList({ unlockedSounds }: AlermListProps) {
 
       {alarms.length === 0 ? (
         <div className="text-center py-12">
-          <BellOffIcon className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-          <p className="text-gray-600">アラームがまだ登録されていません</p>
-          <p className="text-sm text-gray-500">
-            上のボタンから新しいアラームを追加してください
+          <div className="text-5xl mx-auto mb-3">🍱</div>
+          <p className="text-muted-foreground font-medium">まだアラームないで〜</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            下のフォームから追加してみてな！
           </p>
         </div>
       ) : (

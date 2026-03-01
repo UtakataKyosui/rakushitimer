@@ -4,8 +4,11 @@ import Navbar from "./components/common/navbar";
 import AlermList from "./components/alerm/list";
 import SettingsTab from "./components/settings/settings-tab";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useUnlockedSounds } from "@/hooks/use-unlocked-sounds";
 
 function App() {
+  const { unlockedSounds, isLoading, unlockByCode } = useUnlockedSounds();
+
   return (
     <main className="container mx-auto py-8 h-screen">
       <Navbar />
@@ -15,10 +18,14 @@ function App() {
           <TabsTrigger value="settings">設定</TabsTrigger>
         </TabsList>
         <TabsContent value="alarm">
-          <AlermList />
+          <AlermList unlockedSounds={unlockedSounds} />
         </TabsContent>
         <TabsContent value="settings">
-          <SettingsTab />
+          <SettingsTab
+            unlockedSounds={unlockedSounds}
+            soundsLoading={isLoading}
+            unlockByCode={unlockByCode}
+          />
         </TabsContent>
       </Tabs>
     </main>

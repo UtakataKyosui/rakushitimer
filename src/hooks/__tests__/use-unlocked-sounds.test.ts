@@ -85,17 +85,18 @@ describe("useUnlockedSounds", () => {
       unlockResult = await result.current.unlockByCode(TEST_CODE);
     });
 
-    expect(unlockResult!.success).toBe(true);
-    if (unlockResult!.success) {
-      expect(unlockResult!.sound.id).toBe("test-sound-1");
-      expect(unlockResult!.alreadyUnlocked).toBe(false);
-    }
+    expect(unlockResult!).toEqual({
+      success: true,
+      sound: testSoundEntry,
+      alreadyUnlocked: false,
+    });
 
     expect(result.current.unlockedSounds).toHaveLength(1);
     expect(result.current.unlockedSounds[0].id).toBe("test-sound-1");
 
     const store = getMockStore();
     expect(store.set).toHaveBeenCalledWith("unlocked_sounds", ["test-sound-1"]);
+    expect(store.save).toHaveBeenCalled();
   });
 
   it("unlockByCode: 既解放済みのコードは alreadyUnlocked: true でストアへの再書き込みなし", async () => {
@@ -115,10 +116,11 @@ describe("useUnlockedSounds", () => {
       unlockResult = await result.current.unlockByCode(TEST_CODE);
     });
 
-    expect(unlockResult!.success).toBe(true);
-    if (unlockResult!.success) {
-      expect(unlockResult!.alreadyUnlocked).toBe(true);
-    }
+    expect(unlockResult!).toEqual({
+      success: true,
+      sound: testSoundEntry,
+      alreadyUnlocked: true,
+    });
 
     expect(store.set).not.toHaveBeenCalled();
   });

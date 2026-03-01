@@ -81,6 +81,7 @@ export function useUnlockedSounds(): {
           STORE_KEY,
           newUnlocked.map((s) => s.id)
         );
+        await storeRef.current.save();
       } catch (e) {
         // 永続化失敗時はUIをロールバックしてエラーを再スロー
         syncUnlocked(current);

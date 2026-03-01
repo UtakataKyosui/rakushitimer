@@ -1,21 +1,31 @@
-import { useState, useRef } from "react";
+import { useState, useRef, type KeyboardEvent } from "react";
 import { KeyRoundIcon, Volume2Icon, CheckCircleIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useUnlockedSounds } from "@/hooks/use-unlocked-sounds";
+import { type UnlockableSound } from "@/lib/serial-codes";
+import { type UnlockResult } from "@/hooks/use-unlocked-sounds";
 
-export default function SettingsTab() {
+interface SettingsTabProps {
+  unlockedSounds: UnlockableSound[];
+  soundsLoading: boolean;
+  unlockByCode: (code: string) => Promise<UnlockResult>;
+}
+
+export default function SettingsTab({
+  unlockedSounds,
+  soundsLoading,
+  unlockByCode,
+}: SettingsTabProps) {
   const [code, setCode] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { unlockedSounds, unlockByCode } = useUnlockedSounds();
 
   const handleUnlock = async () => {
     const trimmed = code.trim();
     if (!trimmed) return;
 
-    setIsLoading(true);
+    setIsSubmitting(true);
     try {
       const result = await unlockByCode(trimmed);
       if (result.success) {
@@ -32,16 +42,18 @@ export default function SettingsTab() {
       console.error("音声の解放に失敗しました:", error);
       toast.error("音声の解放に失敗しました。しばらくしてからもう一度試してな");
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
       inputRef.current?.focus();
     }
   };
 
-  const handleKeyDown = (e: { key: string }) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleUnlock();
     }
   };
+
+  const isDisabled = isSubmitting || soundsLoading;
 
   return (
     <div className="space-y-6">
@@ -61,10 +73,10 @@ export default function SettingsTab() {
             onKeyDown={handleKeyDown}
             placeholder="シリアルコードを入力"
             className="flex-1"
-            disabled={isLoading}
+            disabled={isDisabled}
           />
-          <Button onClick={handleUnlock} disabled={isLoading || !code.trim()}>
-            {isLoading ? "確認中..." : "解放する"}
+          <Button onClick={handleUnlock} disabled={isDisabled || !code.trim()}>
+            {isSubmitting ? "確認中..." : "解放する"}
           </Button>
         </div>
       </section>

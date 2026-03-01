@@ -3,6 +3,7 @@ import { vi } from "vitest";
 export interface MockStore {
   get: ReturnType<typeof vi.fn>;
   set: ReturnType<typeof vi.fn>;
+  save: ReturnType<typeof vi.fn>;
 }
 
 let mockStoreData: Record<string, unknown> = {};
@@ -13,6 +14,7 @@ const createMockStore = (): MockStore => ({
     mockStoreData[key] = value;
     return Promise.resolve();
   }),
+  save: vi.fn(() => Promise.resolve()),
 });
 
 let currentMockStore: MockStore = createMockStore();

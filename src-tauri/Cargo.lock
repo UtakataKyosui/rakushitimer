@@ -3629,7 +3629,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-alerm"
 version = "0.1.0"
-source = "git+https://github.com/UtakataKyosui/tauri-plugin-alerm-android?rev=0c43628edf2fd84c2d6156b7a90aa26403455be6#0c43628edf2fd84c2d6156b7a90aa26403455be6"
+source = "git+https://github.com/UtakataKyosui/tauri-plugin-alerm-android?rev=7bef6d41bced216934d5ec8f7c08af7358b01779#7bef6d41bced216934d5ec8f7c08af7358b01779"
 dependencies = [
  "serde",
  "tauri",

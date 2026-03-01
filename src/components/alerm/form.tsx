@@ -46,6 +46,7 @@ export const alermFormSchema = z.object({
     .min(0, "0以上の値を入力してください")
     .optional()
     .transform((v) => (v === 0 ? undefined : v)),
+  soundUri: z.string().optional(),
 });
 
 export type AlermFormData = z.infer<typeof alermFormSchema>;
@@ -95,6 +96,7 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
         triggerAtMs,
         exact: data.exact,
         repeatIntervalMs: data.repeatIntervalMs,
+        soundUri: data.soundUri,
       };
 
       await onSubmit(options);

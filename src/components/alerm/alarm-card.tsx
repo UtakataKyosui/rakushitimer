@@ -38,7 +38,7 @@ export function AlarmCard({
   };
 
   return (
-    <Item>
+    <Item className="bg-[oklch(0.97_0.01_55)] border-[oklch(0.90_0.03_55)]">
       <ItemMedia variant="icon">
         <BellIcon className="w-5 h-5" />
       </ItemMedia>

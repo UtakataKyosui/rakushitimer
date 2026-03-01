@@ -14,7 +14,7 @@ export default function Navbar() {
       className="flex justify-between py-3 px-6 border-b border-brand/30 shrink-0 relative overflow-hidden"
       style={{
         backgroundImage: [
-          "linear-gradient(135deg, oklch(0.22 0.05 42) 0%, oklch(0.26 0.06 45) 100%)",
+          "linear-gradient(135deg, var(--brand-dark) 0%, oklch(0.26 0.06 45) 100%)",
           "repeating-linear-gradient(45deg, transparent, transparent 8px, oklch(0.65 0.17 55 / 0.06) 8px, oklch(0.65 0.17 55 / 0.06) 9px)",
           "repeating-linear-gradient(-45deg, transparent, transparent 8px, oklch(0.65 0.17 55 / 0.06) 8px, oklch(0.65 0.17 55 / 0.06) 9px)",
         ].join(", "),

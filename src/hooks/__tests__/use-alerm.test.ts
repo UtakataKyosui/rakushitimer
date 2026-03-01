@@ -111,4 +111,22 @@ describe("useAlerm", () => {
     expect(result.current.permission).not.toBeNull();
     expect(result.current.permission?.canScheduleExactAlarms).toBeDefined();
   });
+
+  it("アラーム追加: soundUri を含むアラームを追加できる", async () => {
+    const { result } = renderHook(() => useAlerm());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    await act(async () => {
+      await result.current.addAlarm({
+        title: "音声付きアラーム",
+        triggerAtMs: 1700000000000,
+        soundUri: "sounds/alarm.mp3",
+      });
+    });
+
+    expect(result.current.alarms[0].soundUri).toBe("sounds/alarm.mp3");
+  });
 });

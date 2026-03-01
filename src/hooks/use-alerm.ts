@@ -14,6 +14,7 @@ export interface AlarmInfo {
   triggerAtMs: number;
   exact: boolean;
   repeatIntervalMs?: number;
+  soundUri?: string;
 }
 
 export interface CheckPermissionResult {
@@ -26,6 +27,7 @@ export interface SetAlarmOptions {
   triggerAtMs: number;
   exact?: boolean;
   repeatIntervalMs?: number;
+  soundUri?: string;
 }
 
 export function useAlerm() {
@@ -74,6 +76,7 @@ export function useAlerm() {
         triggerAtMs: options.triggerAtMs,
         exact: options.exact ?? true,
         repeatIntervalMs: options.repeatIntervalMs,
+        soundUri: options.soundUri,
       };
 
       await setAlarm({

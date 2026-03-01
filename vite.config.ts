@@ -42,6 +42,7 @@ export default defineConfig(async () => ({
     exclude: [...configDefaults.exclude, "**/.worktrees/**"],
     alias: {
       "tauri-plugin-alerm-api": path.resolve(__dirname, "./src/hooks/__mocks__/tauri-plugin-alerm-api.ts"),
+      "@tauri-apps/plugin-store": path.resolve(__dirname, "./src/hooks/__mocks__/tauri-plugin-store.ts"),
     }
   }
 }));

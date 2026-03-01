@@ -1,5 +1,6 @@
 import { BellOffIcon } from "lucide-react";
 import { useAlerm } from "@/hooks/use-alerm";
+import { useUnlockedSounds } from "@/hooks/use-unlocked-sounds";
 import { Spinner } from "@/components/ui/spinner";
 import { ItemGroup } from "@/components/ui/item";
 import { PermissionBanner } from "./permission-banner";
@@ -16,6 +17,7 @@ export default function AlermList() {
     removeAlarm,
     openPermissionSettings,
   } = useAlerm();
+  const { unlockedSounds } = useUnlockedSounds();
 
   if (isLoading) {
     return (
@@ -32,7 +34,7 @@ export default function AlermList() {
         onOpenSettings={openPermissionSettings}
       />
 
-      <AlermForm onSubmit={addAlarm} />
+      <AlermForm onSubmit={addAlarm} unlockedSounds={unlockedSounds} />
 
       {alarms.length === 0 ? (
         <div className="text-center py-12">

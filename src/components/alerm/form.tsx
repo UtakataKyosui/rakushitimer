@@ -24,6 +24,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -32,6 +39,7 @@ import {
 } from "@/components/ui/popover";
 import { SetAlarmOptions } from "@/hooks/use-alerm";
 import { toast } from "sonner";
+import { type UnlockableSound } from "@/lib/serial-codes";
 
 export const alermFormSchema = z.object({
   title: z.string().min(1, "タイトルは必須です").max(50, "50文字以内で入力してください"),
@@ -53,9 +61,10 @@ export type AlermFormData = z.infer<typeof alermFormSchema>;
 
 interface AlermFormProps {
   onSubmit: (options: SetAlarmOptions) => Promise<void>;
+  unlockedSounds: UnlockableSound[];
 }
 
-export function AlermForm({ onSubmit }: AlermFormProps) {
+export function AlermForm({ onSubmit, unlockedSounds }: AlermFormProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -258,16 +267,33 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
               name="soundUri"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>アラーム音（オプション）</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="sounds/alarm.mp3"
-                      {...field}
-                      value={field.value ?? ""}
-                    />
-                  </FormControl>
+                  <FormLabel>アラーム音</FormLabel>
+                  <Select
+                    onValueChange={(value) =>
+                      field.onChange(value === "__system__" ? undefined : value)
+                    }
+                    defaultValue="__system__"
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="システム音（デフォルト）" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="__system__">
+                        システム音（デフォルト）
+                      </SelectItem>
+                      {unlockedSounds.map((sound) => (
+                        <SelectItem key={sound.id} value={sound.soundUri}>
+                          {sound.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormDescription>
-                    アセットフォルダ内の音声ファイルパス（省略時はシステム音）
+                    {unlockedSounds.length === 0
+                      ? "設定タブでシリアルコードを入力すると特別な音声が選べるで"
+                      : "解放済みの音声から選択できるで"}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { BellIcon } from "lucide-react";

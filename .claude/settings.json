@@ -1,0 +1,13 @@
+{
+  "env": {
+    "OTEL_RESOURCE_ATTRIBUTES": "project.name=rakushitimer"
+  },
+  "enabledPlugins": {
+    "code-review@utakata-plugins": true,
+    "tauri-app-dev@utakata-plugins": true,
+    "frontend-design@claude-code-plugins": true,
+    "superpowers@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "feature-dev@claude-code-plugins": true
+  }
+}

@@ -10,10 +10,6 @@ const host = process.env.TAURI_DEV_HOST;
 export default defineConfig(async () => ({
   plugins: [react(),tailwindcss()],
 
-  optimizeDeps: {
-    exclude: ["tauri-plugin-alerm-api"],
-  },
-
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent Vite from obscuring rust errors
@@ -43,6 +39,7 @@ export default defineConfig(async () => ({
   test: {
     environment: "jsdom",
     globals: true,
+    exclude: ["**/.worktrees/**", "**/node_modules/**"],
     alias: {
       "tauri-plugin-alerm-api": path.resolve(__dirname, "./src/hooks/__mocks__/tauri-plugin-alerm-api.ts"),
     }

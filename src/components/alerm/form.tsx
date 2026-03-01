@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
@@ -59,7 +59,7 @@ export function AlermForm({ onSubmit }: AlermFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<AlermFormData>({
-    resolver: zodResolver(alermFormSchema) as any,
+    resolver: zodResolver(alermFormSchema) as Resolver<AlermFormData>,
     defaultValues: {
       title: "",
       message: "",

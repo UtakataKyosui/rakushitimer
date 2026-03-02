@@ -11,7 +11,7 @@ import {
   ItemActions,
 } from "@/components/ui/item";
 import { Button } from "@/components/ui/button";
-import { AlarmInfo } from "@/hooks/use-alerm";
+import { AlarmInfo } from "@/hooks/use-alarm";
 
 interface AlarmCardProps {
   alarm: AlarmInfo;

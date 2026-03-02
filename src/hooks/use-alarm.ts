@@ -5,7 +5,7 @@ import {
   listAlarms,
   checkExactAlarmPermission,
   openExactAlarmSettings,
-} from "tauri-plugin-alerm-api";
+} from "tauri-plugin-alarm-api";
 
 export interface AlarmInfo {
   id: number;
@@ -14,7 +14,9 @@ export interface AlarmInfo {
   triggerAtMs: number;
   exact: boolean;
   repeatIntervalMs?: number;
-  soundUri?: string;
+  snoozeEnabled?: boolean;
+  snoozeDurationMs?: number;
+  repeatDaysOfWeek?: number[];
 }
 
 export interface CheckPermissionResult {
@@ -27,10 +29,12 @@ export interface SetAlarmOptions {
   triggerAtMs: number;
   exact?: boolean;
   repeatIntervalMs?: number;
-  soundUri?: string;
+  snoozeEnabled?: boolean;
+  snoozeDurationMs?: number;
+  repeatDaysOfWeek?: number[];
 }
 
-export function useAlerm() {
+export function useAlarm() {
   const [alarms, setAlarms] = useState<AlarmInfo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,7 +80,9 @@ export function useAlerm() {
         triggerAtMs: options.triggerAtMs,
         exact: options.exact ?? true,
         repeatIntervalMs: options.repeatIntervalMs,
-        soundUri: options.soundUri,
+        snoozeEnabled: options.snoozeEnabled,
+        snoozeDurationMs: options.snoozeDurationMs,
+        repeatDaysOfWeek: options.repeatDaysOfWeek,
       };
 
       await setAlarm({

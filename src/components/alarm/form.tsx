@@ -24,24 +24,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { SetAlarmOptions } from "@/hooks/use-alerm";
+import { SetAlarmOptions } from "@/hooks/use-alarm";
 import { toast } from "sonner";
-import { type UnlockableSound } from "@/lib/serial-codes";
 
-export const alermFormSchema = z.object({
+export const alarmFormSchema = z.object({
   title: z.string().min(1, "タイトルは必須です").max(50, "50文字以内で入力してください"),
   message: z.string().max(200, "200文字以内で入力してください").optional(),
   date: z.date().refine((date) => date != null, {
@@ -54,22 +47,33 @@ export const alermFormSchema = z.object({
     .min(0, "0以上の値を入力してください")
     .optional()
     .transform((v) => (v === 0 ? undefined : v)),
-  soundUri: z.string().optional().transform((v) => (v === "" ? undefined : v)),
+  snoozeEnabled: z.boolean().default(false),
+  snoozeDurationMs: z.coerce.number().min(60000, "1分以上にしてください").optional().default(300000),
+  repeatDaysOfWeek: z.array(z.number()).default([]),
 });
 
-export type AlermFormData = z.infer<typeof alermFormSchema>;
+const DAYS_OF_WEEK = [
+  { id: 0, label: "日" },
+  { id: 1, label: "月" },
+  { id: 2, label: "火" },
+  { id: 3, label: "水" },
+  { id: 4, label: "木" },
+  { id: 5, label: "金" },
+  { id: 6, label: "土" },
+] as const;
 
-interface AlermFormProps {
+export type AlarmFormData = z.infer<typeof alarmFormSchema>;
+
+interface AlarmFormProps {
   onSubmit: (options: SetAlarmOptions) => Promise<void>;
-  unlockedSounds: UnlockableSound[];
 }
 
-export function AlermForm({ onSubmit, unlockedSounds }: AlermFormProps) {
+export function AlarmForm({ onSubmit }: AlarmFormProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<AlermFormData>({
-    resolver: zodResolver(alermFormSchema) as Resolver<AlermFormData>,
+  const form = useForm<AlarmFormData>({
+    resolver: zodResolver(alarmFormSchema) as Resolver<AlarmFormData>,
     defaultValues: {
       title: "",
       message: "",
@@ -77,11 +81,13 @@ export function AlermForm({ onSubmit, unlockedSounds }: AlermFormProps) {
       time: "08:00",
       exact: true,
       repeatIntervalMs: undefined,
-      soundUri: undefined,
+      snoozeEnabled: false,
+      snoozeDurationMs: 300000,
+      repeatDaysOfWeek: [],
     },
   });
 
-  const handleSubmit = async (data: AlermFormData) => {
+  const handleSubmit = async (data: AlarmFormData) => {
     try {
       setIsSubmitting(true);
 
@@ -106,7 +112,9 @@ export function AlermForm({ onSubmit, unlockedSounds }: AlermFormProps) {
         triggerAtMs,
         exact: data.exact,
         repeatIntervalMs: data.repeatIntervalMs,
-        soundUri: data.soundUri,
+        snoozeEnabled: data.snoozeEnabled,
+        snoozeDurationMs: data.snoozeDurationMs,
+        repeatDaysOfWeek: data.repeatDaysOfWeek?.length ? data.repeatDaysOfWeek : undefined,
       };
 
       await onSubmit(options);
@@ -179,8 +187,8 @@ export function AlermForm({ onSubmit, unlockedSounds }: AlermFormProps) {
                       >
                         {field.value
                           ? format(field.value, "yyyy年MM月dd日", {
-                              locale: ja,
-                            })
+                            locale: ja,
+                          })
                           : "日付を選択"}
                       </Button>
                     </PopoverTrigger>
@@ -264,41 +272,98 @@ export function AlermForm({ onSubmit, unlockedSounds }: AlermFormProps) {
 
             <FormField
               control={form.control}
-              name="soundUri"
-              render={({ field }) => (
+              name="repeatDaysOfWeek"
+              render={() => (
                 <FormItem>
-                  <FormLabel>アラーム音</FormLabel>
-                  <Select
-                    onValueChange={(value) =>
-                      field.onChange(value === "__system__" ? undefined : value)
-                    }
-                    value={field.value ?? "__system__"}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="システム音（デフォルト）" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="__system__">
-                        システム音（デフォルト）
-                      </SelectItem>
-                      {unlockedSounds.map((sound) => (
-                        <SelectItem key={sound.id} value={sound.soundUri}>
-                          {sound.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    {unlockedSounds.length === 0
-                      ? "設定タブでシリアルコードを入力すると特別な音声が選べるで"
-                      : "解放済みの音声から選択できるで"}
-                  </FormDescription>
+                  <div className="mb-4">
+                    <FormLabel className="text-base">繰り返す曜日</FormLabel>
+                    <FormDescription>
+                      指定した曜日にアラームを繰り返します
+                    </FormDescription>
+                  </div>
+                  <div className="flex flex-wrap gap-4">
+                    {DAYS_OF_WEEK.map((item) => (
+                      <FormField
+                        key={item.id}
+                        control={form.control}
+                        name="repeatDaysOfWeek"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={item.id}
+                              className="flex flex-row items-start space-x-3 space-y-0"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.includes(item.id)}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([...field.value, item.id])
+                                      : field.onChange(
+                                        field.value?.filter(
+                                          (value) => value !== item.id
+                                        )
+                                      );
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                {item.label}
+                              </FormLabel>
+                            </FormItem>
+                          );
+                        }}
+                      />
+                    ))}
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="snoozeEnabled"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel>スヌーズを利用</FormLabel>
+                    <FormDescription>
+                      発火時にスヌーズボタンを表示します
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {form.watch("snoozeEnabled") && (
+              <FormField
+                control={form.control}
+                name="snoozeDurationMs"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>スヌーズ時間（ミリ秒）</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="300000"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      デフォルト: 300,000ms (5分)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <Button
               type="submit"

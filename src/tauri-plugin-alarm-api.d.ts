@@ -1,4 +1,4 @@
-declare module "tauri-plugin-alerm-api" {
+declare module "tauri-plugin-alarm-api" {
   export interface SetAlarmOptions {
     id?: number;
     title: string;

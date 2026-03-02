@@ -273,7 +273,7 @@ export function AlarmForm({ onSubmit }: AlarmFormProps) {
             <FormField
               control={form.control}
               name="repeatDaysOfWeek"
-              render={() => (
+              render={({ field }) => (
                 <FormItem>
                   <div className="mb-4">
                     <FormLabel className="text-base">繰り返す曜日</FormLabel>
@@ -283,37 +283,27 @@ export function AlarmForm({ onSubmit }: AlarmFormProps) {
                   </div>
                   <div className="flex flex-wrap gap-4">
                     {DAYS_OF_WEEK.map((item) => (
-                      <FormField
+                      <FormItem
                         key={item.id}
-                        control={form.control}
-                        name="repeatDaysOfWeek"
-                        render={({ field }) => {
-                          return (
-                            <FormItem
-                              key={item.id}
-                              className="flex flex-row items-start space-x-3 space-y-0"
-                            >
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value?.includes(item.id)}
-                                  onCheckedChange={(checked) => {
-                                    return checked
-                                      ? field.onChange([...field.value, item.id])
-                                      : field.onChange(
-                                        field.value?.filter(
-                                          (value) => value !== item.id
-                                        )
-                                      );
-                                  }}
-                                />
-                              </FormControl>
-                              <FormLabel className="font-normal">
-                                {item.label}
-                              </FormLabel>
-                            </FormItem>
-                          );
-                        }}
-                      />
+                        className="flex flex-row items-start space-x-3 space-y-0"
+                      >
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value?.includes(item.id)}
+                            onCheckedChange={(checked) => {
+                              const currentDays = field.value ?? [];
+                              if (checked === true) {
+                                field.onChange([...currentDays, item.id].sort((a, b) => a - b));
+                              } else {
+                                field.onChange(currentDays.filter((v) => v !== item.id));
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormLabel className="font-normal">
+                          {item.label}
+                        </FormLabel>
+                      </FormItem>
                     ))}
                   </div>
                   <FormMessage />

@@ -121,6 +121,7 @@ describe("alarmFormSchema", () => {
       title: "朝のアラーム",
       date: new Date("2026-03-02"),
       time: "07:00",
+      exact: true,
       snoozeDurationMs: 30000, // 60,000 未満
     };
 

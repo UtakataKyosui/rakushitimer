@@ -1,10 +1,11 @@
 import "./App.css";
 
 import Navbar from "./components/common/navbar";
-import AlermList from "./components/alerm/list";
+import AlarmList from "./components/alarm/list";
 import SettingsTab from "./components/settings/settings-tab";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useUnlockedSounds } from "@/hooks/use-unlocked-sounds";
+
 
 function App() {
   const { unlockedSounds, isLoading, unlockByCode } = useUnlockedSounds();
@@ -18,7 +19,7 @@ function App() {
           <TabsTrigger value="settings">設定</TabsTrigger>
         </TabsList>
         <TabsContent value="alarm">
-          <AlermList unlockedSounds={unlockedSounds} />
+          <AlarmList />
         </TabsContent>
         <TabsContent value="settings">
           <SettingsTab

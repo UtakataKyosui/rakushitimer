@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { alermFormSchema } from "../form";
+import { alarmFormSchema } from "../form";
 
-describe("alermFormSchema", () => {
+describe("alarmFormSchema", () => {
   it("バリデーション: 有効なフォームデータを受け入れる", () => {
     const validData = {
       title: "朝のアラーム",
@@ -12,7 +12,7 @@ describe("alermFormSchema", () => {
       repeatIntervalMs: 0,
     };
 
-    const result = alermFormSchema.safeParse(validData);
+    const result = alarmFormSchema.safeParse(validData);
     expect(result.success).toBe(true);
   });
 
@@ -25,7 +25,7 @@ describe("alermFormSchema", () => {
       exact: true,
     };
 
-    const result = alermFormSchema.safeParse(invalidData);
+    const result = alarmFormSchema.safeParse(invalidData);
     expect(result.success).toBe(false);
   });
 
@@ -38,7 +38,7 @@ describe("alermFormSchema", () => {
       exact: true,
     };
 
-    const result = alermFormSchema.safeParse(invalidData);
+    const result = alarmFormSchema.safeParse(invalidData);
     expect(result.success).toBe(false);
   });
 
@@ -50,7 +50,7 @@ describe("alermFormSchema", () => {
       exact: true,
     };
 
-    const result = alermFormSchema.safeParse(invalidData);
+    const result = alarmFormSchema.safeParse(invalidData);
     expect(result.success).toBe(false);
   });
 
@@ -63,7 +63,7 @@ describe("alermFormSchema", () => {
       exact: true,
     };
 
-    const result = alermFormSchema.safeParse(invalidData);
+    const result = alarmFormSchema.safeParse(invalidData);
     expect(result.success).toBe(false);
   });
 
@@ -76,7 +76,7 @@ describe("alermFormSchema", () => {
       repeatIntervalMs: 0,
     };
 
-    const result = alermFormSchema.safeParse(validData);
+    const result = alarmFormSchema.safeParse(validData);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.repeatIntervalMs).toBeUndefined();
@@ -92,57 +92,40 @@ describe("alermFormSchema", () => {
       repeatIntervalMs: 86400000,
     };
 
-    const result = alermFormSchema.safeParse(validData);
+    const result = alarmFormSchema.safeParse(validData);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.repeatIntervalMs).toBe(86400000);
     }
   });
 
-  it("バリデーション: soundUri が指定されている場合に保持", () => {
+  it("バリデーション: snoozeEnabled と repeatDaysOfWeek と snoozeDurationMs のデフォルト値", () => {
     const validData = {
-      title: "テスト",
+      title: "朝のアラーム",
       date: new Date("2026-03-02"),
       time: "07:00",
       exact: true,
-      soundUri: "sounds/alarm.mp3",
     };
 
-    const result = alermFormSchema.safeParse(validData);
+    const result = alarmFormSchema.safeParse(validData);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.soundUri).toBe("sounds/alarm.mp3");
+      expect(result.data.snoozeEnabled).toBe(false);
+      expect(result.data.snoozeDurationMs).toBe(300000);
+      expect(result.data.repeatDaysOfWeek).toEqual([]);
     }
   });
 
-  it("バリデーション: soundUri が未指定の場合は undefined", () => {
-    const validData = {
-      title: "テスト",
+  it("バリデーション: スヌーズ時間が短すぎる場合はエラー", () => {
+    const invalidData = {
+      title: "朝のアラーム",
       date: new Date("2026-03-02"),
       time: "07:00",
       exact: true,
+      snoozeDurationMs: 30000, // 60,000 未満
     };
 
-    const result = alermFormSchema.safeParse(validData);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.soundUri).toBeUndefined();
-    }
-  });
-
-  it("バリデーション: soundUri が空文字列の場合は undefined に変換", () => {
-    const validData = {
-      title: "テスト",
-      date: new Date("2026-03-02"),
-      time: "07:00",
-      exact: true,
-      soundUri: "",
-    };
-
-    const result = alermFormSchema.safeParse(validData);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.soundUri).toBeUndefined();
-    }
+    const result = alarmFormSchema.safeParse(invalidData);
+    expect(result.success).toBe(false);
   });
 });

@@ -37,7 +37,7 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.1",
-    "tauri-plugin-alerm-api": "^0.1.0",
+    "tauri-plugin-alarm-api": "github:UtakataKyosui/tauri-plugin-alarm-android#50bdf3c1a34006e3694c33e17191c2660b3a556d",
     "vaul": "^1.1.2",
     "zod": "^4.3.6"
   },

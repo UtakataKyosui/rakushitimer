@@ -1,26 +1,21 @@
 import { BellOffIcon } from "lucide-react";
-import { useAlerm } from "@/hooks/use-alerm";
-import { type UnlockableSound } from "@/lib/serial-codes";
+import { useAlarm } from "@/hooks/use-alarm";
 import { Spinner } from "@/components/ui/spinner";
 import { ItemGroup } from "@/components/ui/item";
 import { PermissionBanner } from "./permission-banner";
-import { AlermForm } from "./form";
+import { AlarmForm } from "./form";
 import { AlarmCard } from "./alarm-card";
 
-interface AlermListProps {
-  unlockedSounds: UnlockableSound[];
-}
-
-export default function AlermList({ unlockedSounds }: AlermListProps) {
+export default function AlarmList() {
   const {
     alarms,
     isLoading,
-    isSubmitting,
+    isRemoving,
     permission,
     addAlarm,
     removeAlarm,
     openPermissionSettings,
-  } = useAlerm();
+  } = useAlarm();
 
   if (isLoading) {
     return (
@@ -37,7 +32,7 @@ export default function AlermList({ unlockedSounds }: AlermListProps) {
         onOpenSettings={openPermissionSettings}
       />
 
-      <AlermForm onSubmit={addAlarm} unlockedSounds={unlockedSounds} />
+      <AlarmForm onSubmit={addAlarm} />
 
       {alarms.length === 0 ? (
         <div className="text-center py-12">
@@ -54,7 +49,7 @@ export default function AlermList({ unlockedSounds }: AlermListProps) {
               key={alarm.id}
               alarm={alarm}
               onCancel={removeAlarm}
-              isDeleting={isSubmitting}
+              isDeleting={isRemoving}
             />
           ))}
         </ItemGroup>

@@ -1,6 +1,6 @@
 {
   "$schema": "../gen/schemas/android-schema.json",
-  "identifier": "android-alerm",
+  "identifier": "android-alarm",
   "description": "Capability for Android alarm management",
   "windows": ["main"],
   "platforms": ["android"],
@@ -10,10 +10,10 @@
     "store:allow-load",
     "store:allow-get",
     "store:allow-set",
-    "alerm:allow-set-alarm",
-    "alerm:allow-cancel-alarm",
-    "alerm:allow-list-alarms",
-    "alerm:allow-check-exact-alarm-permission",
-    "alerm:allow-open-exact-alarm-settings"
+    "alarm:allow-set-alarm",
+    "alarm:allow-cancel-alarm",
+    "alarm:allow-list-alarms",
+    "alarm:allow-check-exact-alarm-permission",
+    "alarm:allow-open-exact-alarm-settings"
   ]
 }

@@ -9,9 +9,16 @@ import { BellIcon, Settings2Icon } from "lucide-react";
 
 function App() {
   const { unlockedSounds, isLoading, unlockByCode } = useUnlockedSounds();
+  const isTauri =
+    typeof window !== "undefined" && !!window.__TAURI_INTERNALS__;
 
   return (
     <main className="flex flex-col h-screen overflow-hidden">
+      {!isTauri && (
+        <div className="bg-amber-100 border-b border-amber-300 text-amber-900 text-sm px-6 py-2 text-center shrink-0">
+          ⚠️ このアプリはAndroid端末でご利用ください（Tauri環境が検出されませんでした）
+        </div>
+      )}
       <Navbar />
       <Tabs defaultValue="alarm" className="flex-1 overflow-hidden">
         <TabsContent value="alarm" className="overflow-auto">

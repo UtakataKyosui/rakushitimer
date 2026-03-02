@@ -10,7 +10,7 @@ export default function AlarmList() {
   const {
     alarms,
     isLoading,
-    isSubmitting,
+    isRemoving,
     permission,
     addAlarm,
     removeAlarm,
@@ -49,7 +49,7 @@ export default function AlarmList() {
               key={alarm.id}
               alarm={alarm}
               onCancel={removeAlarm}
-              isDeleting={isSubmitting}
+              isDeleting={isRemoving}
             />
           ))}
         </ItemGroup>

@@ -22,7 +22,8 @@ describe("useAlarm", () => {
 
     expect(result.current.alarms).toEqual([]);
     expect(result.current.isLoading).toBe(true);
-    expect(result.current.isSubmitting).toBe(false);
+    expect(result.current.isAdding).toBe(false);
+    expect(result.current.isRemoving).toBe(false);
 
     // 初期化完了を待つ
     await waitFor(() => {

@@ -6,7 +6,9 @@ declare module "tauri-plugin-alarm-api" {
     triggerAtMs: number;
     exact?: boolean;
     repeatIntervalMs?: number;
-    soundUri?: string;
+    snoozeEnabled?: boolean;
+    snoozeDurationMs?: number;
+    repeatDaysOfWeek?: number[];
   }
 
   export interface CheckPermissionResult {
@@ -20,7 +22,9 @@ declare module "tauri-plugin-alarm-api" {
     triggerAtMs: number;
     exact: boolean;
     repeatIntervalMs?: number;
-    soundUri?: string;
+    snoozeEnabled?: boolean;
+    snoozeDurationMs?: number;
+    repeatDaysOfWeek?: number[];
   }
 
   export function setAlarm(options: SetAlarmOptions): Promise<void>;

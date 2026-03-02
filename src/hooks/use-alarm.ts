@@ -37,7 +37,8 @@ export interface SetAlarmOptions {
 export function useAlarm() {
   const [alarms, setAlarms] = useState<AlarmInfo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
   const [permission, setPermission] = useState<CheckPermissionResult | null>(null);
   const nextId = useRef(1);
 
@@ -71,7 +72,7 @@ export function useAlarm() {
   // アラーム追加
   const addAlarm = useCallback(async (options: SetAlarmOptions) => {
     try {
-      setIsSubmitting(true);
+      setIsAdding(true);
       const id = nextId.current++;
       const newAlarm: AlarmInfo = {
         id,
@@ -96,21 +97,21 @@ export function useAlarm() {
       console.error("Failed to add alarm:", error);
       throw error;
     } finally {
-      setIsSubmitting(false);
+      setIsAdding(false);
     }
   }, []);
 
   // アラーム削除
   const removeAlarm = useCallback(async (id: number) => {
     try {
-      setIsSubmitting(true);
+      setIsRemoving(true);
       await cancelAlarm(id);
       setAlarms((prev) => prev.filter((a) => a.id !== id));
     } catch (error) {
       console.error("Failed to remove alarm:", error);
       throw error;
     } finally {
-      setIsSubmitting(false);
+      setIsRemoving(false);
     }
   }, []);
 
@@ -127,7 +128,8 @@ export function useAlarm() {
   return {
     alarms,
     isLoading,
-    isSubmitting,
+    isAdding,
+    isRemoving,
     permission,
     addAlarm,
     removeAlarm,

@@ -260,10 +260,16 @@ export function AlarmForm({ onSubmit }: AlarmFormProps) {
                       placeholder="0"
                       {...field}
                       value={field.value ?? ""}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        if (e.target.value && Number(e.target.value) !== 0) {
+                          form.setValue("repeatDaysOfWeek", []);
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormDescription>
-                    0 の場合は繰り返しなし（1日 = 86400000ms）
+                    0 の場合は繰り返しなし（1日 = 86400000ms）。「繰り返す曜日」とは同時に設定できません。
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -278,7 +284,7 @@ export function AlarmForm({ onSubmit }: AlarmFormProps) {
                   <div className="mb-4">
                     <FormLabel className="text-base">繰り返す曜日</FormLabel>
                     <FormDescription>
-                      指定した曜日にアラームを繰り返します
+                      指定した曜日にアラームを繰り返します。「繰り返し間隔」とは同時に設定できません。
                     </FormDescription>
                   </div>
                   <div className="flex flex-wrap gap-4">
@@ -293,6 +299,7 @@ export function AlarmForm({ onSubmit }: AlarmFormProps) {
                             onCheckedChange={(checked) => {
                               const currentDays = field.value ?? [];
                               if (checked === true) {
+                                form.setValue("repeatIntervalMs", undefined);
                                 field.onChange([...currentDays, item.id].sort((a, b) => a - b));
                               } else {
                                 field.onChange(currentDays.filter((v) => v !== item.id));

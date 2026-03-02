@@ -60,10 +60,10 @@ export default function SettingsTab({
       <section className="space-y-3">
         <div className="flex items-center gap-2">
           <KeyRoundIcon className="w-5 h-5 text-muted-foreground" />
-          <h2 className="text-base font-semibold">シリアルコードで音声を解放</h2>
+          <h2 className="text-base font-semibold">おかんからの特別ボイスを解放する</h2>
         </div>
         <p className="text-sm text-muted-foreground">
-          シリアルコードを入力すると、特別な音声をアンロックできるで
+          シリアルコードを入力したら、おかんのボイスをもらえるで！
         </p>
         <div className="flex gap-2">
           <Input
@@ -76,7 +76,7 @@ export default function SettingsTab({
             disabled={isDisabled}
           />
           <Button onClick={handleUnlock} disabled={isDisabled || !code.trim()}>
-            {isSubmitting ? "確認中..." : "解放する"}
+            {isSubmitting ? "確認中..." : "もらう！"}
           </Button>
         </div>
       </section>
@@ -84,11 +84,11 @@ export default function SettingsTab({
       <section className="space-y-3">
         <div className="flex items-center gap-2">
           <Volume2Icon className="w-5 h-5 text-muted-foreground" />
-          <h2 className="text-base font-semibold">解放済み音声</h2>
+          <h2 className="text-base font-semibold">もらったボイス一覧</h2>
         </div>
         {unlockedSounds.length === 0 ? (
           <p className="text-sm text-muted-foreground py-4 text-center">
-            まだ音声が解放されていません
+            まだもらったボイスないで
           </p>
         ) : (
           <ul className="space-y-2">

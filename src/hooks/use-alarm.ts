@@ -7,6 +7,16 @@ import {
   openExactAlarmSettings,
 } from "tauri-plugin-alarm-api";
 
+const isTauriEnv =
+  typeof window !== "undefined" && !!window.__TAURI_INTERNALS__;
+
+function toHumanError(error: unknown): Error {
+  if (!isTauriEnv) {
+    return new Error("このアプリはAndroid端末（Tauri環境）でのみ動作します");
+  }
+  return error instanceof Error ? error : new Error(String(error));
+}
+
 export interface AlarmInfo {
   id: number;
   title: string;
@@ -58,9 +68,14 @@ export function useAlarm() {
         }
         setPermission(permissionResult);
       } catch (error) {
-        console.error("Failed to initialize alarms:", error);
+        if (!isTauriEnv) {
+          console.warn("Tauri環境が検出されませんでした。ブラウザモードで動作します。");
+          setPermission(null);
+        } else {
+          console.error("Failed to initialize alarms:", error);
+          setPermission({ canScheduleExactAlarms: false });
+        }
         setAlarms([]);
-        setPermission({ canScheduleExactAlarms: false });
       } finally {
         setIsLoading(false);
       }
@@ -94,8 +109,9 @@ export function useAlarm() {
 
       setAlarms((prev) => [...prev, newAlarm]);
     } catch (error) {
-      console.error("Failed to add alarm:", error);
-      throw error;
+      const humanError = toHumanError(error);
+      console.error("Failed to add alarm:", humanError);
+      throw humanError;
     } finally {
       setIsAdding(false);
     }
@@ -108,8 +124,9 @@ export function useAlarm() {
       await cancelAlarm(id);
       setAlarms((prev) => prev.filter((a) => a.id !== id));
     } catch (error) {
-      console.error("Failed to remove alarm:", error);
-      throw error;
+      const humanError = toHumanError(error);
+      console.error("Failed to remove alarm:", humanError);
+      throw humanError;
     } finally {
       setIsRemoving(false);
     }

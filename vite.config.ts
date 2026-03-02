@@ -3,12 +3,25 @@ import { defineConfig, configDefaults } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import tailwindcss from '@tailwindcss/vite'
 
+import browserslist from "browserslist";
+import { browserslistToTargets, Features } from "lightningcss";
+
 // @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vite.dev/config/
 export default defineConfig(async () => ({
-  plugins: [react(),tailwindcss()],
+  plugins: [react(), tailwindcss()],
+  css: {
+    transformer: 'lightningcss' as const,
+    lightningcss: {
+      targets: browserslistToTargets(browserslist(">= 0.25%, not dead, android >= 74, ios_saf >= 14")),
+      include: Features.Colors,
+    }
+  },
+  build: {
+    cssMinify: 'lightningcss' as const
+  },
 
   optimizeDeps: {
     exclude: ["tauri-plugin-alarm-api"],
@@ -26,10 +39,10 @@ export default defineConfig(async () => ({
     host: host || false,
     hmr: host
       ? {
-          protocol: "ws",
-          host,
-          port: 1421,
-        }
+        protocol: "ws",
+        host,
+        port: 1421,
+      }
       : undefined,
     watch: {
       // 3. tell Vite to ignore watching `src-tauri`

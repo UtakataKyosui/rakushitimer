@@ -1,6 +1,7 @@
 # きつね色の台所テーマ Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+> *(※本ガイドは Claude 3.5 Sonnet / Claude Code 系エージェントの自動実行を前提に記述されています)*
 
 **Goal:** 「いなりといっしょ！」のUIテーマを「きつね色の台所」（黄金橙＋焦げ茶）に刷新し、いなり寿司・オカン感を演出する
 

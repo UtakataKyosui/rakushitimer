@@ -1,6 +1,7 @@
 # Bugfix: Tauri環境チェック + Android水色背景修正 Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+> *(※本ガイドは Claude 3.5 Sonnet / Claude Code 系エージェントの自動実行を前提に記述されています)*
 
 **Goal:** ブラウザモード（`npm run dev`）でのTypeErrorを握りつぶして分かりやすい警告に変え、Androidアプリ起動時の水色背景をきつね色テーマに合わせた温かみある色に修正する
 

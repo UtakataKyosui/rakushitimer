@@ -23,6 +23,11 @@ export default defineConfig(async () => ({
     cssMinify: 'lightningcss' as const
   },
 
+  optimizeDeps: {
+    exclude: ["tauri-plugin-alarm-api"],
+  },
+
+
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent Vite from obscuring rust errors
@@ -54,7 +59,7 @@ export default defineConfig(async () => ({
     globals: true,
     exclude: [...configDefaults.exclude, "**/.worktrees/**"],
     alias: {
-      "tauri-plugin-alerm-api": path.resolve(__dirname, "./src/hooks/__mocks__/tauri-plugin-alerm-api.ts"),
+      "tauri-plugin-alarm-api": path.resolve(__dirname, "./src/hooks/__mocks__/tauri-plugin-alarm-api.ts"),
       "@tauri-apps/plugin-store": path.resolve(__dirname, "./src/hooks/__mocks__/tauri-plugin-store.ts"),
     }
   }

@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
-import { useAlerm } from "../use-alerm";
+import { useAlarm } from "../use-alarm";
+import { setAlarm } from "tauri-plugin-alarm-api";
 
 // Mock tauri plugin
-vi.mock("tauri-plugin-alerm-api", () => ({
+vi.mock("tauri-plugin-alarm-api", () => ({
   setAlarm: vi.fn(),
   cancelAlarm: vi.fn(),
   listAlarms: vi.fn(() => Promise.resolve([])),
@@ -11,17 +12,18 @@ vi.mock("tauri-plugin-alerm-api", () => ({
   openExactAlarmSettings: vi.fn(),
 }));
 
-describe("useAlerm", () => {
+describe("useAlarm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("フック初期化: 初期状態をチェック", async () => {
-    const { result } = renderHook(() => useAlerm());
+    const { result } = renderHook(() => useAlarm());
 
     expect(result.current.alarms).toEqual([]);
     expect(result.current.isLoading).toBe(true);
-    expect(result.current.isSubmitting).toBe(false);
+    expect(result.current.isAdding).toBe(false);
+    expect(result.current.isRemoving).toBe(false);
 
     // 初期化完了を待つ
     await waitFor(() => {
@@ -30,7 +32,7 @@ describe("useAlerm", () => {
   });
 
   it("アラーム追加: 正常にアラームを追加できる", async () => {
-    const { result } = renderHook(() => useAlerm());
+    const { result } = renderHook(() => useAlarm());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -49,7 +51,7 @@ describe("useAlerm", () => {
   });
 
   it("ID生成: 衝突しない ID を生成", async () => {
-    const { result } = renderHook(() => useAlerm());
+    const { result } = renderHook(() => useAlarm());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -79,7 +81,7 @@ describe("useAlerm", () => {
   });
 
   it("アラーム削除: キャンセル処理を実行", async () => {
-    const { result } = renderHook(() => useAlerm());
+    const { result } = renderHook(() => useAlarm());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -102,7 +104,7 @@ describe("useAlerm", () => {
   });
 
   it("権限チェック: Android 12+ 権限状態をチェック", async () => {
-    const { result } = renderHook(() => useAlerm());
+    const { result } = renderHook(() => useAlarm());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -112,8 +114,8 @@ describe("useAlerm", () => {
     expect(result.current.permission?.canScheduleExactAlarms).toBeDefined();
   });
 
-  it("アラーム追加: soundUri を含むアラームを追加できる", async () => {
-    const { result } = renderHook(() => useAlerm());
+  it("アラーム追加: スヌーズ時間やリピート曜日が正しく渡される", async () => {
+    const { result } = renderHook(() => useAlarm());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -121,12 +123,22 @@ describe("useAlerm", () => {
 
     await act(async () => {
       await result.current.addAlarm({
-        title: "音声付きアラーム",
+        title: "新機能テスト",
         triggerAtMs: 1700000000000,
-        soundUri: "sounds/alarm.mp3",
+        snoozeEnabled: true,
+        snoozeDurationMs: 600000,
+        repeatDaysOfWeek: [1, 3, 5],
       });
     });
 
-    expect(result.current.alarms[0].soundUri).toBe("sounds/alarm.mp3");
+    // setAlarm はモックされているため、引数を検証
+    expect(setAlarm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "新機能テスト",
+        snoozeEnabled: true,
+        snoozeDurationMs: 600000,
+        repeatDaysOfWeek: [1, 3, 5],
+      })
+    );
   });
 });

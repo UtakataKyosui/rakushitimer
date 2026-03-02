@@ -1,7 +1,7 @@
 import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { CheckPermissionResult } from "@/hooks/use-alerm";
+import { CheckPermissionResult } from "@/hooks/use-alarm";
 
 interface PermissionBannerProps {
   permission: CheckPermissionResult | null;

@@ -5,7 +5,7 @@ import {
   listAlarms,
   checkExactAlarmPermission,
   openExactAlarmSettings,
-} from "tauri-plugin-alerm-api";
+} from "tauri-plugin-alarm-api";
 
 const isTauriEnv =
   typeof window !== "undefined" && !!window.__TAURI_INTERNALS__;
@@ -24,7 +24,9 @@ export interface AlarmInfo {
   triggerAtMs: number;
   exact: boolean;
   repeatIntervalMs?: number;
-  soundUri?: string;
+  snoozeEnabled?: boolean;
+  snoozeDurationMs?: number;
+  repeatDaysOfWeek?: number[];
 }
 
 export interface CheckPermissionResult {
@@ -37,13 +39,16 @@ export interface SetAlarmOptions {
   triggerAtMs: number;
   exact?: boolean;
   repeatIntervalMs?: number;
-  soundUri?: string;
+  snoozeEnabled?: boolean;
+  snoozeDurationMs?: number;
+  repeatDaysOfWeek?: number[];
 }
 
-export function useAlerm() {
+export function useAlarm() {
   const [alarms, setAlarms] = useState<AlarmInfo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
   const [permission, setPermission] = useState<CheckPermissionResult | null>(null);
   const nextId = useRef(1);
 
@@ -81,7 +86,7 @@ export function useAlerm() {
   // アラーム追加
   const addAlarm = useCallback(async (options: SetAlarmOptions) => {
     try {
-      setIsSubmitting(true);
+      setIsAdding(true);
       const id = nextId.current++;
       const newAlarm: AlarmInfo = {
         id,
@@ -90,7 +95,9 @@ export function useAlerm() {
         triggerAtMs: options.triggerAtMs,
         exact: options.exact ?? true,
         repeatIntervalMs: options.repeatIntervalMs,
-        soundUri: options.soundUri,
+        snoozeEnabled: options.snoozeEnabled,
+        snoozeDurationMs: options.snoozeDurationMs,
+        repeatDaysOfWeek: options.repeatDaysOfWeek,
       };
 
       await setAlarm({
@@ -105,14 +112,14 @@ export function useAlerm() {
       console.error("Failed to add alarm:", humanError.message);
       throw humanError;
     } finally {
-      setIsSubmitting(false);
+      setIsAdding(false);
     }
   }, []);
 
   // アラーム削除
   const removeAlarm = useCallback(async (id: number) => {
     try {
-      setIsSubmitting(true);
+      setIsRemoving(true);
       await cancelAlarm(id);
       setAlarms((prev) => prev.filter((a) => a.id !== id));
     } catch (error) {
@@ -120,7 +127,7 @@ export function useAlerm() {
       console.error("Failed to remove alarm:", humanError.message);
       throw humanError;
     } finally {
-      setIsSubmitting(false);
+      setIsRemoving(false);
     }
   }, []);
 
@@ -137,7 +144,8 @@ export function useAlerm() {
   return {
     alarms,
     isLoading,
-    isSubmitting,
+    isAdding,
+    isRemoving,
     permission,
     addAlarm,
     removeAlarm,

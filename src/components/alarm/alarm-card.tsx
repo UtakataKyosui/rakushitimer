@@ -1,4 +1,4 @@
-import { BellIcon, TrashIcon, RepeatIcon, Volume2Icon } from "lucide-react";
+import { BellIcon, TrashIcon, RepeatIcon } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { toast } from "sonner";
@@ -11,7 +11,7 @@ import {
   ItemActions,
 } from "@/components/ui/item";
 import { Button } from "@/components/ui/button";
-import { AlarmInfo } from "@/hooks/use-alerm";
+import { AlarmInfo } from "@/hooks/use-alarm";
 
 interface AlarmCardProps {
   alarm: AlarmInfo;
@@ -63,10 +63,10 @@ export function AlarmCard({
                 <span>繰り返し</span>
               </div>
             )}
-            {alarm.soundUri && (
+            {alarm.snoozeEnabled && (
               <div className="flex items-center gap-1 text-xs text-green-600">
-                <Volume2Icon className="w-3 h-3" />
-                <span>{alarm.soundUri}</span>
+                <RepeatIcon className="w-3 h-3" />
+                <span>スヌーズあり</span>
               </div>
             )}
           </div>

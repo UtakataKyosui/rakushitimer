@@ -1,11 +1,12 @@
 import "./App.css";
 
 import Navbar from "./components/common/navbar";
-import AlermList from "./components/alerm/list";
+import AlarmList from "./components/alarm/list";
 import SettingsTab from "./components/settings/settings-tab";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useUnlockedSounds } from "@/hooks/use-unlocked-sounds";
 import { BellIcon, Settings2Icon } from "lucide-react";
+
 
 function App() {
   const { unlockedSounds, isLoading, unlockByCode } = useUnlockedSounds();
@@ -23,7 +24,7 @@ function App() {
       <Tabs defaultValue="alarm" className="flex-1 overflow-hidden">
         <TabsContent value="alarm" className="overflow-auto">
           <div className="px-6 py-4">
-            <AlermList unlockedSounds={unlockedSounds} />
+            <AlarmList />
           </div>
         </TabsContent>
         <TabsContent value="settings" className="overflow-auto">

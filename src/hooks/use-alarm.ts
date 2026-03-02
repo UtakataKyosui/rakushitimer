@@ -70,11 +70,12 @@ export function useAlarm() {
       } catch (error) {
         if (!isTauriEnv) {
           console.warn("Tauri環境が検出されませんでした。ブラウザモードで動作します。");
+          setPermission(null);
         } else {
           console.error("Failed to initialize alarms:", error);
+          setPermission({ canScheduleExactAlarms: false });
         }
         setAlarms([]);
-        setPermission({ canScheduleExactAlarms: false });
       } finally {
         setIsLoading(false);
       }
@@ -109,7 +110,7 @@ export function useAlarm() {
       setAlarms((prev) => [...prev, newAlarm]);
     } catch (error) {
       const humanError = toHumanError(error);
-      console.error("Failed to add alarm:", humanError.message);
+      console.error("Failed to add alarm:", humanError);
       throw humanError;
     } finally {
       setIsAdding(false);
@@ -124,7 +125,7 @@ export function useAlarm() {
       setAlarms((prev) => prev.filter((a) => a.id !== id));
     } catch (error) {
       const humanError = toHumanError(error);
-      console.error("Failed to remove alarm:", humanError.message);
+      console.error("Failed to remove alarm:", humanError);
       throw humanError;
     } finally {
       setIsRemoving(false);

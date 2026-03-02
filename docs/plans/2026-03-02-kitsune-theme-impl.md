@@ -69,7 +69,7 @@
 **Step 4: TypeScript ビルドチェック**
 
 ```bash
-cd /home/utakata/rakushitimer
+# リポジトリルートで実行
 npm run build 2>&1 | tail -20
 ```
 
@@ -101,7 +101,6 @@ export default function Navbar() {
     <nav
       className="flex justify-between py-3 px-6 border-b border-brand/30 shrink-0 relative overflow-hidden"
       style={{
-        background: "linear-gradient(135deg, oklch(0.22 0.05 42) 0%, oklch(0.26 0.06 45) 100%)",
         backgroundImage: [
           "linear-gradient(135deg, oklch(0.22 0.05 42) 0%, oklch(0.26 0.06 45) 100%)",
           "repeating-linear-gradient(45deg, transparent, transparent 8px, oklch(0.65 0.17 55 / 0.06) 8px, oklch(0.65 0.17 55 / 0.06) 9px)",
@@ -270,7 +269,7 @@ git commit -m "feat: 設定タブのテキストをオカン口調に変更"
 **Step 2: `Item` コンポーネントが `className` を受け取るか確認**
 
 ```bash
-grep -n "className" /home/utakata/rakushitimer/src/components/ui/item.tsx | head -10
+grep -n "className" src/components/ui/item.tsx | head -10
 ```
 
 `className` を受け取っていない場合は、直接ラッパー `div` を使う：

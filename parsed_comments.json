@@ -1,0 +1,130 @@
+{
+  "path": "docs/plans/2026-03-02-kitsune-theme-impl.md",
+  "line": 110,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nインラインスタイル内で `background` と `backgroundImage` の両方が指定されています。`backgroundImage` プロパティは `background` ショートハンドプロパティの `background-image` 部分を上書きするため、先に指定された `background` は冗長です。コードを簡潔にするために、不要な `background` プロパティを削除することをお勧めします。\n\n```suggestion\n      style={{\n        backgroundImage: [\n          \"linear-gradient(135deg, oklch(0.22 0.05 42) 0%, oklch(0.26 0.06 45) 100%)\",\n          \"repeating-linear-gradient(45deg, transparent, transparent 8px, oklch(0.65 0.17 55 / 0.06) 8px, oklch(0.65 0.17 55 / 0.06) 9px)\",\n          \"repeating-linear-gradient(-45deg, transparent, transparent 8px, oklch(0.65 0.17 55 / 0.06) 8px, oklch(0.65 0.17 55 / 0.06) 9px)\",\n        ].join(\", \"),\n      }}\n```"
+}
+{
+  "path": "src/App.tsx",
+  "line": 54,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nボトムナビゲーションの実装に `!` (important) 修飾子が多く使われています。これにより `shadcn/ui` のデフォルトスタイルを上書きしていますが、`!` の多用はスタイルの予測を難しくし、将来のメンテナンス性を損なう可能性があります。\n\n可能であれば、`Tabs` コンポーネントの `variant` を追加するか、より詳細なCSSセレクタを使って `App.css` でスタイルを定義することで、`!` の使用を避けられないか検討してみてください。これにより、コンポーネントの再利用性が高まり、スタイルの関心事を分離できます。"
+}
+{
+  "path": "src/components/alerm/alarm-card.tsx",
+  "line": 41,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nアラームカードの背景色とボーダー色に `oklch` の値が直接ハードコードされています。これにより、テーマの管理が煩雑になり、一貫性を保つのが難しくなります。\n\nこれらの色を `src/App.css` 内で `--card-warm-background` や `--card-warm-border` のようなCSSカスタムプロパティとして定義し、Tailwind CSSのテーマ経由で利用することをお勧めします。これにより、他のテーマカラーと同様に一元管理でき、保守性が向上します。"
+}
+{
+  "path": "src/components/common/navbar.tsx",
+  "line": 17,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nこの `linear-gradient` は開始色と終了色が同じ `var(--brand-dark)` になっているため、グラデーションではなく単色塗りつぶしになってしまいます。設計書にある「焦げ茶→少し明るい焦げ茶のグラデーション」を実装するには、異なる色を指定する必要があります。\n\n実装計画書に記載されている `oklch(0.26 0.06 45)` を終了色として使用することをお勧めします。\n\n```suggestion\n          \"linear-gradient(135deg, var(--brand-dark) 0%, oklch(0.26 0.06 45) 100%)\",\n```"
+}
+{
+  "path": "src/components/common/navbar.tsx",
+  "line": null,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\n菱形パターンの色 `oklch(0.65 0.17 55 / 0.06)` がハードコードされています。この値は `--brand` カラーにアルファ値を加えたものなので、テーマの変更に追従できるようにCSS変数から動的に生成するのが望ましいです。\n\n`oklch(from var(--brand) l c h / 0.06)` という構文を使うことで、`--brand` 変数を参照しつつアルファ値を適用できます。これにより、ハードコードをなくし、保守性を向上させることができます。\n\n```suggestion\n          \"repeating-linear-gradient(45deg, transparent, transparent 8px, oklch(from var(--brand) l c h / 0.06) 8px, oklch(from var(--brand) l c h / 0.06) 9px)\",\n          \"repeating-linear-gradient(-45deg, transparent, transparent 8px, oklch(from var(--brand) l c h / 0.06) 8px, oklch(from var(--brand) l c h / 0.06) 9px)\",\n```"
+}
+{
+  "path": "src/components/common/navbar.tsx",
+  "line": 20,
+  "body": "`backgroundImage` の最初のレイヤーが `linear-gradient(135deg, var(--brand-dark) 0%, var(--brand-dark) 100%)` になっていて開始色と終了色が同一なので、PR説明/設計書の「焦げ茶グラデーション」になりません。終点を少し明るい色にする等、2色以上でグラデーションになる指定にしてください。"
+}
+{
+  "path": "src/components/common/navbar.tsx",
+  "line": null,
+  "body": "`DialogTrigger asChild` の子要素が `InfoIcon` (svg) だとキーボードフォーカスできず、スクリーンリーダー向けのラベルも付かないため操作性/アクセシビリティが落ちます。`button` 要素（`type=\"button\"`）でラップして `aria-label` を付与した上で `DialogTrigger asChild` に渡す形にしてください。\n```suggestion\n            <button\n              type=\"button\"\n              aria-label=\"アプリの説明を開く\"\n              className=\"text-white/70 hover:text-white cursor-pointer transition-colors relative z-10\"\n            >\n              <InfoIcon aria-hidden=\"true\" />\n            </button>\n```"
+}
+{
+  "path": "docs/plans/2026-03-02-kitsune-theme-impl.md",
+  "line": 72,
+  "body": "ドキュメント内の手順で `cd /home/utakata/rakushitimer` のような絶対パスが入っていて、他の環境でそのまま再現できません。リポジトリルート前提なら `cd <repo>` を省略するか相対パスベースの記述にしてください。\n```suggestion\n# リポジトリルートで実行\n```"
+}
+{
+  "path": "docs/plans/2026-03-02-kitsune-theme-impl.md",
+  "line": 273,
+  "body": "`grep` コマンドが `/home/utakata/rakushitimer/...` の絶対パスを参照しており、他の環境では成立しません。`src/components/ui/item.tsx` のようなリポジトリ相対パスに直して、手順の再現性を担保してください。\n```suggestion\ngrep -n \"className\" src/components/ui/item.tsx | head -10\n```"
+}
+{
+  "path": "index.html",
+  "line": 2,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nこのインラインスタイルで指定された背景色は、アプリ起動時のちらつきを防ぐために重要ですね。一方で、この色は `src/App.css` の `--background`、`tauri.conf.json` の `backgroundColor`、Android の `colors.xml` の `warm_cream` でも定義されており、複数の箇所でハードコードされています。将来的に背景色を変更する際は、これらの箇所も忘れずに更新する必要があります。一元管理が難しい箇所ですが、ドキュメントやCSS内のコメントでこれらの関連性を記述しておくと、将来のメンテナンス性が向上するでしょう。"
+}
+{
+  "path": "src/App.tsx",
+  "line": 54,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nボトムナビゲーションの実装で多数の `!` (important) 修飾子が使用されていますね。これは `shadcn/ui` のデフォルトスタイルを上書きするために必要だったと推測します。このアプローチは機能しますが、将来的にスタイルのメンテナンスやオーバーライドが難しくなる可能性があります。\n\n可能であれば、`Tabs` コンポーネントのCVA（`src/components/ui/tabs.tsx`内）に新しいバリアント（例: `bottom-nav`）を追加することで、`!` の使用を避け、より宣言的にスタイルを管理できるかもしれません。これはリファクタリングの提案であり、現在の実装でも問題なく動作するとは思います。"
+}
+{
+  "path": "src/components/alerm/alarm-card.tsx",
+  "line": 41,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nここで `oklch` 値が直接指定されていますが、これらはテーマの一部としてCSSカスタムプロパティで管理するのがおすすめです。`src/App.css` に以下のような変数を追加し、ここでは `var()` で参照するように変更すると、保守性が向上します。\n\n**`src/App.css` に追加する例:**\n```css\n@supports (color: oklch(0 0 0)) {\n    :root {\n        /* ... existing variables ... */\n        --card-alt-background: oklch(0.97 0.01 55);\n        --card-alt-border: oklch(0.90 0.03 55);\n    }\n}\n```\n\n```suggestion\n    <Item className=\"bg-[var(--card-alt-background)] border-[var(--card-alt-border)]\">\n```"
+}
+{
+  "path": "src/components/common/navbar.tsx",
+  "line": 21,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nインラインスタイルでの背景実装、素晴らしいですね。より保守性を高めるために2点提案です。\n\n1.  **グラデーションの適用**: 実装計画書にあった `oklch(0.22 0.05 42)` から `oklch(0.26 0.06 45)` への微妙なグラデーションを復元すると、よりリッチな見た目になります。\n2.  **色の変数化**: パターンに使用されている `rgba(200, 130, 28, 0.06)` は `--brand` カラーのようです。これを `var(--brand)` を使って表現することで、テーマの変更に強くなります。\n\nCSSの `oklch()` カラー関数と相対色構文（`from`）を使えば、`--brand` 変数から透明度付きの色を動的に生成できます。`vite.config.ts`で`lightningcss`を導入されているので、このモダンな構文は利用可能です。\n\n```suggestion\n      style={{\n        backgroundImage: [\n          \"linear-gradient(135deg, oklch(0.22 0.05 42) 0%, oklch(0.26 0.06 45) 100%)\",\n          \"repeating-linear-gradient(45deg, transparent, transparent 8px, oklch(from var(--brand) l c h / 0.06) 8px, oklch(from var(--brand) l c h / 0.06) 9px)\",\n          \"repeating-linear-gradient(-45deg, transparent, transparent 8px, oklch(from var(--brand) l c h / 0.06) 8px, oklch(from var(--brand) l c h / 0.06) 9px)\",\n        ].join(\", \"),\n      }}\n```"
+}
+{
+  "path": "index.html",
+  "line": 2,
+  "body": "`html` に固定の `background-color: #FDFCF5` を指定すると、ダークモード時に初期描画（CSS/JS適用前）で明るい背景がフラッシュする可能性があります。`prefers-color-scheme` を考慮した初期背景（dark 用の色も指定）か、初期背景を CSS で制御できる形にしてください。"
+}
+{
+  "path": "src/hooks/use-alerm.ts",
+  "line": 106,
+  "body": "`console.error` の第2引数に `humanError.message`（文字列）だけを渡すと、スタックトレースや `cause` 等の情報が失われてデバッグしづらくなります。`humanError` 自体（必要なら元の `error` も）を渡してログに残るようにしてください。"
+}
+{
+  "path": "src/hooks/use-alerm.ts",
+  "line": 121,
+  "body": "`console.error` が `humanError.message` だけを出力しているため、実際の例外情報（スタック等）がログに残りません。`humanError`（または元の `error`）を渡して原因追跡できる形にしてください。"
+}
+{
+  "path": "src/components/common/navbar.tsx",
+  "line": 21,
+  "body": "![high](https://www.gstatic.com/codereviewagent/high-priority.svg)\n\n`backgroundImage`のスタイルに2点改善提案があります。\n\n1.  **ハードコードされた色:** 菱形パターンの色として`rgba(200, 130, 28, 0.06)`が直接指定されています。このRGB値はライトテーマの`--brand`カラーに相当するため、ダークモードでは意図しない色で表示されてしまいます。`oklch(from var(--brand) l c h / 0.06)`のようにCSS変数を使用することで、テーマ変更に追従できるようになります。\n\n2.  **グラデーションの不一致:** 実装計画書では「焦げ茶→少し明るい焦げ茶のグラデーション」とありますが、現在の`linear-gradient`は開始色と終了色が同じ`var(--brand-dark)`になっており、実質的に単色塗りつぶしになっています。計画書通りにグラデーションを実装することをお勧めします。\n\n```suggestion\nstyle={{\n  backgroundImage: [\n    \"linear-gradient(135deg, var(--brand-dark), oklch(0.26 0.06 45))\",\n    \"repeating-linear-gradient(45deg, transparent, transparent 8px, oklch(from var(--brand) l c h / 0.06) 8px, oklch(from var(--brand) l c h / 0.06) 9px)\",\n    \"repeating-linear-gradient(-45deg, transparent, transparent 8px, oklch(from var(--brand) l c h / 0.06) 8px, oklch(from var(--brand) l c h / 0.06) 9px)\",\n  ].join(\", \"),\n}}\n```"
+}
+{
+  "path": "docs/plans/2026-03-02-bugfix-tauri-env-android-bg.md",
+  "line": 3,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nこの実装計画書はAI（Claude）向けに書かれているようですね。タスクが明確に分割されており、非常に分かりやすいです。\n\n一点だけ、このような自動化を前提としたドキュメントでは、将来の参照性を高めるために、どのバージョンのClaude（または他のAIモデル）を対象としているか、あるいはどのようなプロンプトエンジニアリングの前提があるかを記載しておくと、再現性がさらに高まるかもしれません。"
+}
+{
+  "path": "index.html",
+  "line": 2,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\n`<html>`タグにインラインスタイルで背景色を直接指定すると、OSがダークモードに設定されているユーザーに対して、アプリ起動時にライトテーマの背景色が一瞬表示されてしまう（FOUC）可能性があります。\n\nユーザー体験向上のため、`<head>`内で小さなスクリプトを実行し、`prefers-color-scheme`メディアクエリに基づいて適切な背景色を動的に設定する方法を検討することをお勧めします。\n\n例えば、以下のようなスクリプトを`<head>`に追加することで、ダークモードに対応した初期背景色を設定できます。\n\n```html\n<script>\n  (function() {\n    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;\n    // App.cssの.darkの--background HEXフォールバック値に合わせる\n    const backgroundColor = prefersDark ? '#201E1C' : '#FDFCF5';\n    document.documentElement.style.backgroundColor = backgroundColor;\n  })();\n</script>\n```"
+}
+{
+  "path": "src-tauri/tauri.conf.json",
+  "line": 18,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\n`backgroundColor`にライトテーマの色をハードコードすると、ダークモード利用時にアプリ起動時に一瞬明るい背景が表示されてしまう可能性があります。これはネイティブ側でのFOUC（Flash of Unstyled Content）に繋がります。\n\nTauriの`window`設定には`theme`プロパティがあり、`\"system\"`を設定することでOSのテーマに追従できます。`backgroundColor`がテーマに追従できるか、または`set_theme` APIなどを起動初期に使用してこの問題を回避できるか、調査してみることをお勧めします。"
+}
+{
+  "path": "src/App.tsx",
+  "line": 39,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nボトムナビゲーションの実装で、`TabsList`のスタイルを`!`（important）を多用して上書きしていますね。これは`shadcn/ui`のデフォルトスタイルを強制的に変更しているため、将来のライブラリ更新で意図しない表示崩れが起きる可能性があります。\n\nより堅牢な実装として、`src/components/ui/tabs.tsx`内の`tabsListVariants`に`\"bottom-nav\"`のような新しいvariantを追加し、`App.tsx`からはそのvariantを指定する方法を検討してみてください。これにより、スタイルの関心事をコンポーネント定義に集約でき、保守性が向上します。"
+}
+{
+  "path": "src/components/alerm/alarm-card.tsx",
+  "line": 41,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nアラームカードの背景色とボーダー色が`oklch`値で直接指定されています。\n\nこれらの色は`App.css`で`--card-alt-background`や`--card-alt-border`のようなCSS変数として定義し、HEXのフォールバックとダークモード用の値も用意することをお勧めします。\n\n現状の実装では、ダークモードでも同じ明るい色が使用されてしまい、背景とのコントラストが強くなりすぎる可能性があります。CSS変数にまとめることで、テーマの一貫性が保たれ、保守性も向上します。"
+}
+{
+  "path": "vite.config.ts",
+  "line": 18,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\n`browserslist`のターゲットに`android >= 80`が指定されていますね。これはAndroid 11のWebView（Chrome 83ベース）あたりをターゲットにすることを意味し、Android 10以前のサポートが実質的に切られる可能性があります。\n\nこのアプリがサポートすべきAndroidの最低バージョンを再確認し、もしAndroid 10なども対象とする場合は、`android >= 74`のようにターゲットを引き下げることを検討してください。`lightningcss`が`oklch`などの新しい記法をターゲットに合わせて適切にトランスパイルしてくれます。"
+}
+{
+  "path": "src/App.tsx",
+  "line": 23,
+  "body": "`Tabs` コンポーネント側のデフォルトが `flex ... gap-2` なので、`TabsList` を下部に置くとコンテンツとボトムナビの間に常に余白が入ります（`Tabs` 実装: src/components/ui/tabs.tsx）。ボトムナビをぴったり下端に付けたい場合は、この `Tabs` の `className` で `gap-0`（必要なら `!gap-0`）を指定してください。\n```suggestion\n      <Tabs defaultValue=\"alarm\" className=\"!gap-0 flex-1 overflow-hidden\">\n```"
+}
+{
+  "path": "src/hooks/use-alerm.ts",
+  "line": 72,
+  "body": "非Tauri環境の初期化失敗時に `setPermission({ canScheduleExactAlarms: false })` を入れると、ブラウザでも `PermissionBanner` が表示されて「設定を開く」ボタンが押せてしまい、結局 `openExactAlarmSettings()` が失敗してトーストエラーになります。非Tauri時は `permission` を `null` にする（= バナー非表示）か、PermissionBanner 側でTauri環境以外では出さない分岐を入れてください。\n```suggestion\n          setPermission(null);\n        } else {\n          console.error(\"Failed to initialize alarms:\", error);\n          setPermission({ canScheduleExactAlarms: false });\n        }\n        setAlarms([]);\n```"
+}
+{
+  "path": "src-tauri/gen/android/app/src/main/assets/sounds/README.md",
+  "line": 3,
+  "body": "この README は `src-tauri/sounds/README.md` と内容が重複しており、さらに `tauri.conf.json` の `bundle.resources` は `sounds/*` を `src-tauri/sounds/` からバンドルする設定になっています。音声配置の正本がどこか分かりにくくなるので、(1) この gen 配下 README を削除して `src-tauri/sounds/` に寄せる、または (2) Android ではこのディレクトリが参照される根拠（コピー手順/ビルド処理）をREADMEに追記して混乱が起きないようにしてください。\n```suggestion\n# Android 用 sounds アセットについて\n\nこのディレクトリは **Android 向けビルドで参照されるアセット用ディレクトリ** です。\n\n- 音声ファイルの正本（ソース）は `src-tauri/sounds/` 配下に配置してください。\n- Android 向けのビルド時に、このディレクトリの内容が `src-tauri/sounds/` からコピー／生成されることを前提としています。\n  - 具体的なコピー手順やビルド処理は、プロジェクトのビルドスクリプト（例: Tauri モバイル用のビルドフローや Gradle 設定など）を参照してください。\n\n## 音声を追加する手順（開発者向け）\n\n1. `src-tauri/sounds/` にアンロック可能な音声ファイルを追加する。\n2. `src-tauri/sounds/README.md` のガイドラインに従ってファイル名や配置を確認する。\n3. 音声ファイルを追加したら `src/lib/serial-codes.ts` の `UNLOCKABLE_SOUNDS` にエントリを追加する。\n4. Android 向けビルドを実行し、その過程で `src-tauri/sounds/` の内容がこのディレクトリに反映されることを確認する。\n\n通常、開発者が直接編集すべきなのは `src-tauri/sounds/` 側であり、\nこの `gen/android/app/src/main/assets/sounds/` 配下はビルド成果物／生成物として扱うことを想定しています。\n```"
+}

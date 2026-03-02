@@ -21,7 +21,7 @@ function App() {
         </div>
       )}
       <Navbar />
-      <Tabs defaultValue="alarm" className="flex-1 overflow-hidden">
+      <Tabs defaultValue="alarm" className="!gap-0 flex-1 overflow-hidden">
         <TabsContent value="alarm" className="overflow-auto">
           <div className="px-6 py-4">
             <AlarmList />
@@ -37,18 +37,12 @@ function App() {
           </div>
         </TabsContent>
 
-        <TabsList className="!flex !w-full !rounded-none !p-0 !h-16 shrink-0 border-t border-brand/30 bg-brand-dark">
-          <TabsTrigger
-            value="alarm"
-            className="!h-full !flex-col !rounded-none !py-2 !gap-1 text-white/60 data-[state=active]:!text-brand data-[state=active]:!bg-transparent"
-          >
+        <TabsList variant="bottom-nav">
+          <TabsTrigger value="alarm" variant="bottom-nav">
             <BellIcon className="size-5" />
             <span className="text-xs">アラーム</span>
           </TabsTrigger>
-          <TabsTrigger
-            value="settings"
-            className="!h-full !flex-col !rounded-none !py-2 !gap-1 text-white/60 data-[state=active]:!text-brand data-[state=active]:!bg-transparent"
-          >
+          <TabsTrigger value="settings" variant="bottom-nav">
             <Settings2Icon className="size-5" />
             <span className="text-xs">設定</span>
           </TabsTrigger>

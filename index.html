@@ -1,6 +1,13 @@
 <!doctype html>
-<html lang="en" style="background-color: #FDFCF5">
+<html lang="en">
   <head>
+    <script>
+      (function() {
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var backgroundColor = prefersDark ? '#201E1C' : '#FDFCF5';
+        document.documentElement.style.backgroundColor = backgroundColor;
+      })();
+    </script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

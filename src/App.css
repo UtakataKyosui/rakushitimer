@@ -57,6 +57,8 @@
     --popover: #ffffff;
     --popover-foreground: #1c1c1c;
     /* 狐ブランドカラー */
+    --card-alt-background: #FDF4E5;
+    --card-alt-border: #E8CCAA;
     /* きつね色（油揚げ色） */
     --brand: #C8821C;
     --brand-dark: #38200E;
@@ -98,6 +100,8 @@
         --card-foreground: oklch(0.145 0 0);
         --popover: oklch(1 0 0);
         --popover-foreground: oklch(0.145 0 0);
+        --card-alt-background: oklch(0.97 0.01 55);
+        --card-alt-border: oklch(0.90 0.03 55);
         --brand: oklch(0.65 0.17 55);
         --brand-dark: oklch(0.22 0.05 42);
         --primary: oklch(0.65 0.17 55);
@@ -136,6 +140,8 @@
     --card-foreground: #FBFBFB;
     --popover: #2b2b2b;
     --popover-foreground: #FBFBFB;
+    --card-alt-background: #36291A;
+    --card-alt-border: #4D3923;
     --brand: #D4922C;
     --brand-dark: #2a1208;
     --primary: #D4922C;
@@ -174,6 +180,8 @@
         --card-foreground: oklch(0.985 0 0);
         --popover: oklch(0.205 0 0);
         --popover-foreground: oklch(0.985 0 0);
+        --card-alt-background: oklch(0.25 0.02 55);
+        --card-alt-border: oklch(0.35 0.04 55);
         --brand: oklch(0.72 0.16 55);
         --brand-dark: oklch(0.18 0.04 42);
         --primary: oklch(0.72 0.16 55);

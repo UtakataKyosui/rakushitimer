@@ -38,7 +38,7 @@ export function AlarmCard({
   };
 
   return (
-    <Item className="bg-[oklch(0.97_0.01_55)] border-[oklch(0.90_0.03_55)]">
+    <Item className="bg-[var(--card-alt-background)] border-[var(--card-alt-border)]">
       <ItemMedia variant="icon">
         <BellIcon className="w-5 h-5" />
       </ItemMedia>
@@ -49,9 +49,9 @@ export function AlarmCard({
             <p className="text-sm">
               {triggerDate > now
                 ? `${formatDistanceToNow(triggerDate, {
-                    locale: ja,
-                    addSuffix: true,
-                  })}`
+                  locale: ja,
+                  addSuffix: true,
+                })}`
                 : `${format(triggerDate, "yyyy年MM月dd日 HH:mm", { locale: ja })}`}
             </p>
             {alarm.message && (

@@ -15,7 +15,7 @@ export default defineConfig(async () => ({
   css: {
     transformer: 'lightningcss' as const,
     lightningcss: {
-      targets: browserslistToTargets(browserslist(">= 0.25%, not dead, android >= 80, ios_saf >= 14")),
+      targets: browserslistToTargets(browserslist(">= 0.25%, not dead, android >= 74, ios_saf >= 14")),
       include: Features.Colors,
     }
   },
